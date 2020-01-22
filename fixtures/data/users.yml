@@ -1,0 +1,12 @@
+App\Entity\User:
+  user_developer:
+    fullName: 'Symfony Developer'
+    email (unique): 'developer@symfony.local'
+    plainPassword: 'developer'
+    roles: ["ROLE_ADMIN"]
+
+  user_{1..10}:
+    fullName: <firstName()> <lastName()>
+    email (unique): <email()>
+    plainPassword: "changeMe"
+    roles: ["ROLE_USER"]
