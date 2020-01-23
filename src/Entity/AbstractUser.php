@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @JMS\ExclusionPolicy("ALL")
+ * @ORM\EntityListeners({"App\EventListener\UserListener"})
  */
 abstract class AbstractUser implements UserInterface, \Serializable
 {
@@ -25,11 +26,24 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @var string
      *
      * @ORM\Column(type="string")
+     *
      * @Assert\NotBlank
      *
      * @JMS\Expose
      */
-    protected $fullName;
+    protected $firstname;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
+     */
+    protected $lastname;
+
 
     /**
      * @var string
@@ -65,6 +79,85 @@ abstract class AbstractUser implements UserInterface, \Serializable
     protected $password;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $address;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $address2;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $zipcode;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $city;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $phone;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $informationsEnabled;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $tosAcceptedAt;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $isBanned = false;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $deletedAt;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $deletedReason;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $deletedFeedback;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $step = 1;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    protected $latitude;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    protected $longitude;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $hash;
+
+    /**
      * @var array
      *
      * @SWG\Property(
@@ -93,19 +186,35 @@ abstract class AbstractUser implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $fullName
+     * @return string
      */
-    public function setFullName(string $fullName): void
+    public function getFirstname(): ?string
     {
-        $this->fullName = $fullName;
+        return $this->firstname;
+    }
+
+    /**
+     * @param string $firstname
+     */
+    public function setFirstname(string $firstname): void
+    {
+        $this->firstname = $firstname;
     }
 
     /**
      * @return string
      */
-    public function getFullName(): ?string
+    public function getLastname(): ?string
     {
-        return $this->fullName;
+        return $this->lastname;
+    }
+
+    /**
+     * @param string $lastname
+     */
+    public function setLastname(string $lastname): void
+    {
+        $this->lastname = $lastname;
     }
 
     /**
@@ -228,4 +337,190 @@ abstract class AbstractUser implements UserInterface, \Serializable
     {
         [$this->id, $this->username, $this->password] = unserialize($serialized, ['allowed_classes' => false]);
     }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getZipcode(): ?string
+    {
+        return $this->zipcode;
+    }
+
+    public function setZipcode(string $zipcode): self
+    {
+        $this->zipcode = $zipcode;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getInformationsEnabled(): ?bool
+    {
+        return $this->informationsEnabled;
+    }
+
+    public function setInformationsEnabled(bool $informationsEnabled): self
+    {
+        $this->informationsEnabled = $informationsEnabled;
+
+        return $this;
+    }
+
+    public function getTosAcceptedAt(): ?\DateTimeInterface
+    {
+        return $this->tosAcceptedAt;
+    }
+
+    public function setTosAcceptedAt(\DateTimeInterface $tosAcceptedAt): self
+    {
+        $this->tosAcceptedAt = $tosAcceptedAt;
+
+        return $this;
+    }
+
+    public function getIsBanned(): ?bool
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned(bool $isBanned): self
+    {
+        $this->isBanned = $isBanned;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function getDeletedReason(): ?string
+    {
+        return $this->deletedReason;
+    }
+
+    public function setDeletedReason(?string $deletedReason): self
+    {
+        $this->deletedReason = $deletedReason;
+
+        return $this;
+    }
+
+    public function getDeletedFeedback(): ?string
+    {
+        return $this->deletedFeedback;
+    }
+
+    public function setDeletedFeedback(?string $deletedFeedback): self
+    {
+        $this->deletedFeedback = $deletedFeedback;
+
+        return $this;
+    }
+
+    public function getStep(): ?int
+    {
+        return $this->step;
+    }
+
+    public function setStep(int $step): self
+    {
+        $this->step = $step;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): self
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress2(): ?string
+    {
+        return $this->address2;
+    }
+
+    /**
+     * @param string $address2
+     */
+    public function setAddress2(string $address2): void
+    {
+        $this->address2 = $address2;
+    }
+
+
 }

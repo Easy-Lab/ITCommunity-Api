@@ -22,16 +22,20 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fullName')
+            ->add('firstname')
+            ->add('lastname')
             ->add('email')
+            ->add('username')
             ->add('plainPassword')
-            ->add('reviews', EntityType::class, [
-                'class' => Review::class,
-                'multiple' => 'true',
-                'query_builder' => function (EntityRepository $entityRepository) {
-                    return $entityRepository->createQueryBuilder('this');
-                },
-            ]);
+            ->add('address')
+            ->add('address2')
+            ->add('zipcode')
+            ->add('city')
+            ->add('phone')
+//            ->add('tosAcceptedAt')
+            ->add('informationsEnabled')
+            ->add('hash');
+
     }
 
     /**

@@ -66,17 +66,17 @@ class Review
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name_component;
+    private $nameComponent;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $company_component;
+    private $companyComponent;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $other_information_component;
+    private $otherInformationComponent;
 
     /**
      * @return string|null
@@ -158,39 +158,52 @@ class Review
         return $this;
     }
 
-    public function getNameComponent(): ?string
+    /**
+     * @return mixed
+     */
+    public function getNameComponent()
     {
-        return $this->name_component;
+        return $this->nameComponent;
     }
 
-    public function setNameComponent(string $name_component): self
+    /**
+     * @param mixed $nameComponent
+     */
+    public function setNameComponent($nameComponent): void
     {
-        $this->name_component = $name_component;
-
-        return $this;
+        $this->nameComponent = $nameComponent;
     }
 
-    public function getCompanyComponent(): ?string
+    /**
+     * @return mixed
+     */
+    public function getCompanyComponent()
     {
-        return $this->company_component;
+        return $this->companyComponent;
     }
 
-    public function setCompanyComponent(string $company_component): self
+    /**
+     * @param mixed $companyComponent
+     */
+    public function setCompanyComponent($companyComponent): void
     {
-        $this->company_component = $company_component;
-
-        return $this;
+        $this->companyComponent = $companyComponent;
     }
 
-    public function getOtherInformationComponent(): ?string
+    /**
+     * @return mixed
+     */
+    public function getOtherInformationComponent()
     {
-        return $this->other_information_component;
+        return $this->otherInformationComponent;
     }
 
-    public function setOtherInformationComponent(?string $other_information_component): self
+    /**
+     * @param mixed $otherInformationComponent
+     */
+    public function setOtherInformationComponent($otherInformationComponent): void
     {
-        $this->other_information_component = $other_information_component;
-
-        return $this;
+        $this->otherInformationComponent = $otherInformationComponent;
     }
+
 }
