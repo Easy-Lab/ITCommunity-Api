@@ -10,7 +10,6 @@ use App\Exception\ApiException;
 use App\Form\Filter\UserFilter;
 use App\Form\UserType;
 use App\Interfaces\ControllerInterface;
-use App\Service\UserService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
@@ -46,7 +45,6 @@ class UserController extends AbstractController implements ControllerInterface
      *         @SWG\Items(ref=@Model(type=User::class))
      *     )
      * )
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -87,7 +85,7 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        return $this->createResourceResponse($user);
+        return $this->createResourceResponse($user, Response::HTTP_OK);
     }
 
     /**
@@ -110,17 +108,11 @@ class UserController extends AbstractController implements ControllerInterface
      *
      * @return JsonResponse
      */
-    public function createAction(Request $request, UserService $userService, User $user = null): JsonResponse
+    public function createAction(Request $request, User $user = null): JsonResponse
     {
-
-//        $data = json_decode($request->getContent(),true);
-
-
         if (!$user) {
             $user = new User();
-
         }
-
 
         $form = $this->getForm(
             UserType::class,

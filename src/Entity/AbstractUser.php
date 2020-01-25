@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\EventSubscriber\UserSubscriber;
+use App\Service\UserService;
 use App\Traits\IdColumnTrait;
 use App\Traits\TimeAwareTrait;
 use Doctrine\ORM\Mapping as ORM;
