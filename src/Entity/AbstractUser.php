@@ -171,6 +171,11 @@ abstract class AbstractUser implements UserInterface, \Serializable
     protected $roles = ['ROLE_USER'];
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $ip;
+
+    /**
      * @return string
      */
     public function __toString(): string
@@ -523,5 +528,17 @@ abstract class AbstractUser implements UserInterface, \Serializable
         $this->address2 = $address2;
     }
 
+
+    public function getIp(): ?string
+    {
+        return $this->ip;
+    }
+
+    public function setIp(?string $ip): self
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
 
 }

@@ -32,10 +32,11 @@ class UserType extends AbstractType
             ->add('zipcode')
             ->add('city')
             ->add('phone')
-//            ->add('tosAcceptedAt')
             ->add('informationsEnabled')
-            ->add('hash');
-
+            ->add('tosAcceptedAt')
+            ->add('ip')
+            ->add('latitude')
+            ->add('longitude');
     }
 
     /**

@@ -170,10 +170,14 @@ class UserController extends AbstractController implements ControllerInterface
     public function updateAction(Request $request, User $user = null): JsonResponse
     {
         $data = \json_decode($request->getContent(), true);
-        $userEmailExist = $this->userManager->findUserByEmail($data['email']);
-        $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
+        if(isset($data['email'])){
+            $userEmailExist = $this->userManager->findUserByEmail($data['email']);
+        }
+        if(isset($data['username'])){
+            $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
+        }
 
-        if($userEmailExist or $userUsernameExist) {
+        if(isset($userEmailExist) or isset($userUsernameExist)) {
             return $this->createAlredyExistResponse();
         }
 
