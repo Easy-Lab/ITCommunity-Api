@@ -10,6 +10,7 @@ use App\Exception\ApiException;
 use App\Form\Filter\UserFilter;
 use App\Form\UserType;
 use App\Interfaces\ControllerInterface;
+use App\Service\Manager\UserManager;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
@@ -23,12 +24,17 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends AbstractController implements ControllerInterface
 {
+    private $userManager;
+
     /**
      * UserController constructor.
+     * @param UserManager $userManager
      */
-    public function __construct()
+    public function __construct(UserManager $userManager)
     {
         parent::__construct(User::class);
+
+        $this->userManager = $userManager;
     }
 
     /**
@@ -110,6 +116,14 @@ class UserController extends AbstractController implements ControllerInterface
      */
     public function createAction(Request $request, User $user = null): JsonResponse
     {
+        $data = \json_decode($request->getContent(), true);
+        $userEmailExist = $this->userManager->findUserByEmail($data['email']);
+        $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
+
+        if($userEmailExist or $userUsernameExist) {
+            return $this->createAlredyExistResponse();
+        }
+
         if (!$user) {
             $user = new User();
         }
@@ -155,6 +169,14 @@ class UserController extends AbstractController implements ControllerInterface
      */
     public function updateAction(Request $request, User $user = null): JsonResponse
     {
+        $data = \json_decode($request->getContent(), true);
+        $userEmailExist = $this->userManager->findUserByEmail($data['email']);
+        $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
+
+        if($userEmailExist or $userUsernameExist) {
+            return $this->createAlredyExistResponse();
+        }
+
         if (!$user) {
             return $this->createNotFoundResponse();
         }

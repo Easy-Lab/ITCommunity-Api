@@ -1,23 +1,27 @@
 App\Entity\User:
   user_developer:
-    firstname: 'Symfony Developer'
+    firstname: 'Symfony'
+    lastname: 'Developer'
+    username: 'admin'
     email (unique): 'developer@symfony.local'
     plainPassword: 'developer'
     roles: ["ROLE_ADMIN"]
     address: <streetAddress()>
-    address2: <secondaryAddress ()>
+    address2: <secondaryAddress()>
     zipcode: <postcode()>
     city: <city()>
     phone: <phoneNumber()>
     informations_enabled: <boolean()>
 
-  user_{1..10}:
-    firstname: <firstName()> <lastName()>
+  user_{1..7}:
+    firstname: <firstName()>
+    lastname: <lastName()>
+    username: <userName()>
     email (unique): <email()>
     plainPassword: "changeMe"
     roles: ["ROLE_USER"]
     address: <streetAddress()>
-    address2: <secondaryAddress ()>
+    address2: <secondaryAddress()>
     zipcode: <postcode()>
     city: <city()>
     phone: <phoneNumber()>

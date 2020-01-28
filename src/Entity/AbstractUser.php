@@ -49,9 +49,9 @@ abstract class AbstractUser implements UserInterface, \Serializable
     /**
      * @var string
      *
-     * @see UserSubscriber::onFlush
-     *
      * @ORM\Column(type="string", unique=true)
+     *
+     * @JMS\Expose
      */
     protected $username;
 
@@ -168,7 +168,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      *
      * @ORM\Column(type="json")
      */
-    protected $roles = [];
+    protected $roles = ['ROLE_USER'];
 
     /**
      * @return string
@@ -223,7 +223,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      */
     public function getUsername(): ?string
     {
-        return $this->email;
+        return $this->username;
     }
 
     /**

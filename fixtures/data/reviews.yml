@@ -1,5 +1,5 @@
 App\Entity\Review:
-  review_{1..1000}:
+  review_{1..100}:
     body: <paragraph(3, 8)>
     rating: <numberBetween(1, 10)>
     author: '@user*'

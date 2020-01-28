@@ -2,22 +2,16 @@
 
 namespace App\Utils;
 
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Security
 {
-    protected $translator;
     protected $container;
-    protected $templating;
-    protected $features;
     protected $secret_key;
 
-    public function __construct(TranslatorInterface $translator, ContainerInterface $container, \Twig_Environment $templating)
+    public function __construct(ContainerInterface $container)
     {
-        $this->translator = $translator;
         $this->container = $container;
-        $this->templating = $templating;
         $this->secret_key = $this->generate_secret_key($this->container->getParameter('secret'));
     }
 
@@ -76,10 +70,6 @@ class Security
             $true_encrypted_message_length = strlen($encrypted_message);
             if ($true_encrypted_message_length > $nonce_size) $true_encrypted_message_length -= $nonce_size;
             $true_encrypted_message = substr($encrypted_message, 0, $true_encrypted_message_length);
-
-            // echo '<pre>'; var_dump($nonce_size); echo '</pre>';
-            // echo '<pre>'; var_dump(strlen($nonce)); echo '</pre>';
-            // echo '<pre>'; var_dump($true_encrypted_message_length); echo '</pre>';
 
             $decrypted_message = sodium_crypto_secretbox_open($true_encrypted_message, $nonce, $this->secret_key);
 

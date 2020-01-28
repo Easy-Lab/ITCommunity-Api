@@ -41,17 +41,35 @@ class UserSubscriber implements EventSubscriber
     public function getSubscribedEvents(): array
     {
         return [
-            Events::postLoad,
             Events::prePersist,
+            Events::postPersist,
+            Events::preUpdate,
             Events::postUpdate,
             Events::onFlush,
+            Events::postLoad,
         ];
     }
 
     /**
      * @param LifecycleEventArgs $args
+     * @throws Exception
      */
-    public function postLoad(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args): void
+    {
+        $user = $args->getEntity();
+
+
+        if ($user instanceof User) {
+            $this->encodePassword($user);
+            $user->setHash(sha1((string)microtime(true)));
+            $this->encryptFields($user);
+        }
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     */
+    public function postPersist(LifecycleEventArgs $args)
     {
         $user = $args->getEntity();
         if ($user instanceof User) {
@@ -63,14 +81,11 @@ class UserSubscriber implements EventSubscriber
      * @param LifecycleEventArgs $args
      * @throws Exception
      */
-    public function prePersist(LifecycleEventArgs $args): void
+    public function preUpdate(LifecycleEventArgs $args): void
     {
         $user = $args->getEntity();
 
         if ($user instanceof User) {
-            $this->encodePassword($user);
-            $user->setHash(sha1((string)microtime(true)));
-            $user->setTosAcceptedAt(new \DateTime());
             $this->encryptFields($user);
         }
     }
@@ -84,6 +99,7 @@ class UserSubscriber implements EventSubscriber
 
         if ($user instanceof User) {
             $this->encodePassword($user);
+            $this->decryptFields($user);
         }
     }
 
@@ -98,9 +114,19 @@ class UserSubscriber implements EventSubscriber
 
         foreach ($uow->getScheduledEntityInsertions() as $entity) {
             if ($entity instanceof User) {
-                $entity->setUsername($entity->getEmail());
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $entity);
             }
+        }
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     */
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        $user = $args->getEntity();
+        if ($user instanceof User) {
+            $this->decryptFields($user);
         }
     }
 
@@ -120,7 +146,6 @@ class UserSubscriber implements EventSubscriber
         try {
             $this->userService->setCrypted($user, 'firstname', $user->getFirstname());
             $this->userService->setCrypted($user, 'lastname', $user->getLastname());
-            $this->userService->setCrypted($user, 'username', $user->getUsername());
             $this->userService->setCrypted($user, 'email', $user->getEmail());
             $this->userService->setCrypted($user, 'address', $user->getAddress());
             if ($user->getAddress2()) {
@@ -140,7 +165,6 @@ class UserSubscriber implements EventSubscriber
         // Decrypt the variables
         $firstname = $this->userService->getUncrypted($user, 'firstname');
         $lastname = $this->userService->getUncrypted($user, 'lastname');
-        $username = $this->userService->getUncrypted($user, 'username');
         $email = $this->userService->getUncrypted($user, 'email');
         $address = $this->userService->getUncrypted($user, 'address');
         if ($user->getAddress2()) {
@@ -154,7 +178,6 @@ class UserSubscriber implements EventSubscriber
         try {
             $user->setFirstname($firstname);
             $user->setLastname($lastname);
-            $user->setUsername($username);
             $user->setEmail($email);
             $user->setAddress($address);
             $user->setAddress2($address2);

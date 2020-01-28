@@ -27,6 +27,7 @@ abstract class AbstractController extends Controller
 
     public const DELETED = ['success' => 'Deleted.'];
     public const NOT_FOUND = ['error' => 'Resource not found.'];
+    public const ALREDY_EXIST = ['error' => 'User alredy exist with this email or username.'];
     public const GENERAL_ERROR = ['error' => 'Something went wrong.'];
 
     /**
@@ -127,6 +128,16 @@ abstract class AbstractController extends Controller
         $this->responseCreator->setData(self::NOT_FOUND);
 
         return $this->responseCreator->getResponse(Response::HTTP_NOT_FOUND, $this->getEntityResponseField());
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function createAlredyExistResponse(): JsonResponse
+    {
+        $this->responseCreator->setData(self::ALREDY_EXIST);
+
+        return $this->responseCreator->getResponse(Response::HTTP_CONFLICT, $this->getEntityResponseField());
     }
 
     /**

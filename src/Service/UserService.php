@@ -2,27 +2,21 @@
 
 namespace App\Service;
 
-
 use App\Utils\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class UserService
 {
-    protected $translator;
     protected $em;
     protected $encoder;
     protected $features;
-    protected $mailService;
-    protected $pictureService;
     protected $container;
     protected $security;
 
-    public function __construct(TranslatorInterface $translator, ContainerInterface $container, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Security $security)
+    public function __construct(ContainerInterface $container, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Security $security)
     {
-        $this->translator = $translator;
         $this->em = $em;
         $this->encoder = $encoder;
         $this->container = $container;
