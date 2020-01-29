@@ -33,7 +33,6 @@ class UserType extends AbstractType
             ->add('city')
             ->add('phone')
             ->add('informationsEnabled')
-            ->add('tosAcceptedAt')
             ->add('ip')
             ->add('latitude')
             ->add('longitude');

@@ -409,7 +409,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
         return $this->tosAcceptedAt;
     }
 
-    public function setTosAcceptedAt(\DateTimeInterface $tosAcceptedAt): self
+    public function setTosAcceptedAt(?\DateTimeInterface $tosAcceptedAt): self
     {
         $this->tosAcceptedAt = $tosAcceptedAt;
 
