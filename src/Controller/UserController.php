@@ -117,8 +117,10 @@ class UserController extends AbstractController implements ControllerInterface
     public function createAction(Request $request, User $user = null): JsonResponse
     {
         $data = \json_decode($request->getContent(), true);
+
         $userEmailExist = $this->userManager->findUserByEmail($data['email']);
         $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
+
 
         if($userEmailExist or $userUsernameExist) {
             return $this->createAlredyExistResponse();

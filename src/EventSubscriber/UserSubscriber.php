@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventSubscriber;
 
 use App\Entity\User;
+use App\Service\GeolocationService;
 use App\Service\UserService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -22,6 +23,7 @@ class UserSubscriber implements EventSubscriber
      */
     protected $encoder;
     protected $userService;
+    protected $geolocationService;
 
     /**
      * UserSubscriber constructor.
@@ -29,10 +31,11 @@ class UserSubscriber implements EventSubscriber
      * @param UserPasswordEncoderInterface $encoder
      * @param UserService $userService
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, UserService $userService)
+    public function __construct(UserPasswordEncoderInterface $encoder, UserService $userService, GeolocationService $geolocationService)
     {
         $this->encoder = $encoder;
         $this->userService = $userService;
+        $this->geolocationService = $geolocationService;
     }
 
     /**
@@ -62,7 +65,14 @@ class UserSubscriber implements EventSubscriber
         if ($user instanceof User) {
             $this->encodePassword($user);
             $user->setHash(sha1((string)microtime(true)));
+            try {
+                $this->geolocationService->retrieveGeocode($user);
+            } catch (\Error $e) {
+            }
             $this->encryptFields($user);
+            $user->setTosAcceptedAt(new \DateTime());
+
+
         }
     }
 
