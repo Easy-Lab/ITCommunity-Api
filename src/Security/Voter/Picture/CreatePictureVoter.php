@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Security\Voter\Review;
+namespace App\Security\Voter\Picture;
 
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class CreateReviewVoter extends Voter
+class CreatePictureVoter extends Voter
 {
-    public const CAN_CREATE_REVIEW = 'CAN_CREATE_REVIEW';
+    public const CAN_CREATE_PICTURE = 'CAN_CREATE_PICTURE';
 
     /**
      * {@inheritdoc}
@@ -18,7 +18,7 @@ class CreateReviewVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // you only want to vote if the attribute and subject are what you expect
-        return self::CAN_CREATE_REVIEW === $attribute && null === $subject;
+        return self::CAN_CREATE_PICTURE === $attribute && null === $subject;
     }
 
     /**

@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Filter;
 
-use App\Entity\Review;
+use Lexik\Bundle\FormFilterBundle\Filter\Form\Type as Filters;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ReviewType extends AbstractType
+class PictureFilter extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -18,12 +17,8 @@ class ReviewType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('body')
-            ->add('rating')
-            ->add('type')
-            ->add('name_component')
-            ->add('company_component')
-            ->add('other_information_component');
+            ->add('name', Filters\TextFilterType::class)
+            ->add('path', Filters\TextFilterType::class);
     }
 
     /**
@@ -32,7 +27,7 @@ class ReviewType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Review::class,
+            'validation_groups' => ['filtering'],
         ]);
     }
 }

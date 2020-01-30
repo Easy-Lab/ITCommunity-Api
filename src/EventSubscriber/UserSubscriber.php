@@ -65,10 +65,10 @@ class UserSubscriber implements EventSubscriber
         if ($user instanceof User) {
             $this->encodePassword($user);
             $user->setHash(sha1((string)microtime(true)));
-            try {
-                $this->geolocationService->retrieveGeocode($user);
-            } catch (\Error $e) {
-            }
+//            try {
+//                $this->geolocationService->retrieveGeocode($user);
+//            } catch (\Error $e) {
+//            }
             $this->encryptFields($user);
             $user->setTosAcceptedAt(new \DateTime());
 
