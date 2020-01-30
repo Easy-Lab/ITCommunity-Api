@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Review;
+use App\Entity\Picture;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,7 +27,7 @@ class PictureType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Review::class,
+            'data_class' => Picture::class,
         ]);
     }
 }

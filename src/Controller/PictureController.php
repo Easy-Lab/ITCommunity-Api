@@ -115,7 +115,7 @@ class PictureController extends AbstractController implements ControllerInterfac
     {
         if (!$picture) {
             $picture = new Picture();
-            $picture->setAuthor($this->getUser());
+            $picture->setUser($this->getUser());
         }
 
         $form = $this->getForm(
