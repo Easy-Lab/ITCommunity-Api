@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ReviewType extends AbstractType
+class PictureType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -18,12 +18,8 @@ class ReviewType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('body')
-            ->add('rating')
-            ->add('type')
-            ->add('name_component')
-            ->add('company_component')
-            ->add('other_information_component');
+            ->add('name')
+            ->add('path');
     }
 
     /**

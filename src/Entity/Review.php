@@ -52,16 +52,6 @@ class Review
      */
     protected $author;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="date")
-     *
-     * @Assert\NotBlank
-     *
-     * @JMS\Expose
-     */
-    protected $publicationDate;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -77,6 +67,11 @@ class Review
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $otherInformationComponent;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $type;
 
     /**
      * @return string|null
@@ -114,26 +109,6 @@ class Review
     public function setRating(int $rating): self
     {
         $this->rating = $rating;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTimeInterface|null
-     */
-    public function getPublicationDate(): ?\DateTimeInterface
-    {
-        return $this->publicationDate;
-    }
-
-    /**
-     * @param \DateTimeInterface $publicationDate
-     *
-     * @return Review
-     */
-    public function setPublicationDate(?\DateTimeInterface $publicationDate): self
-    {
-        $this->publicationDate = $publicationDate;
 
         return $this;
     }
@@ -204,6 +179,18 @@ class Review
     public function setOtherInformationComponent($otherInformationComponent): void
     {
         $this->otherInformationComponent = $otherInformationComponent;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
 }
