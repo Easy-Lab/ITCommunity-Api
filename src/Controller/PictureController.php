@@ -61,7 +61,7 @@ class PictureController extends AbstractController implements ControllerInterfac
     }
 
     /**
-     * Show single Reviews.
+     * Show single picture.
      *
      * @Route(path="/{picture}", name="api_picture_show", methods={Request::METHOD_GET})
      *
@@ -218,13 +218,13 @@ class PictureController extends AbstractController implements ControllerInterfac
         }
 
         if($this->getUser()->getRoles() === ['ROLE_USER'] || $this->getUser()->getRoles() === ['ROLE_MODERATOR']) {
-            if($picture->getAuthor()->getRoles() === ['ROLE_ADMIN']) {
+            if($picture->getUser()->getRoles() === ['ROLE_ADMIN']) {
                 return $this->createNotFoundResponse();
             }
         }
 
         try {
-            $picture->setAuthor(null);
+            $picture->setUser(null);
             $this->entityManager->remove($picture);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
