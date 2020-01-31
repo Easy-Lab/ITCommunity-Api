@@ -14,7 +14,9 @@ trait TimeAwareTrait
     /**
      * @var DateTimeInterface
      *
-     * @JMS\Expose
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     * )
      *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
@@ -24,7 +26,9 @@ trait TimeAwareTrait
     /**
      * @var DateTimeInterface
      *
-     * @JMS\Expose
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     * )
      *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")

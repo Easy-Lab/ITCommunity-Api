@@ -63,7 +63,9 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @Assert\Email
      * @Assert\NotBlank
      *
-     * @JMS\Expose
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $email;
 
@@ -82,74 +84,125 @@ abstract class AbstractUser implements UserInterface, \Serializable
     /**
      * @var string
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $address;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $address2;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=255)
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $zipcode;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $city;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $phone;
 
     /**
      * @ORM\Column(type="boolean")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $informationsEnabled;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $tosAcceptedAt;
 
     /**
      * @ORM\Column(type="boolean")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     * )
      */
     protected $isBanned = false;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     * )
      */
     protected $deletedAt;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     * )
      */
     protected $deletedReason;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     * )
      */
     protected $deletedFeedback;
 
     /**
      * @ORM\Column(type="integer")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW', object)"
+     * )
      */
     protected $step = 1;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *
+     * @JMS\Expose
      */
     protected $latitude;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *
+     * @JMS\Expose
      */
     protected $longitude;
 
@@ -167,11 +220,19 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * )
      *
      * @ORM\Column(type="json")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW', object)"
+     * )
      */
     protected $roles = ['ROLE_USER'];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW', object)"
+     * )
      */
     protected $ip;
 

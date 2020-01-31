@@ -16,7 +16,9 @@ trait IdColumnTrait
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
      *
-     * @JMS\Expose
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW', object)"
+     * )
      */
     protected $id;
 
