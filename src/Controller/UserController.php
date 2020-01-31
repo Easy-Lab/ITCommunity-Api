@@ -95,6 +95,37 @@ class UserController extends AbstractController implements ControllerInterface
     }
 
     /**
+     * Show the User.
+     *
+     * @Route(path="/account", name="api_user_account_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns user log.",
+     *     @SWG\Schema(
+     *         type="object",
+     *         title="user",
+     *         @SWG\Items(ref=@Model(type=User::class))
+     *     )
+     * )
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse$
+     *
+     * @Security("is_granted('CAN_SHOW_ACCOUNT_USER', user)")
+     */
+    public function showActionAccount(Request $request): JsonResponse
+    {
+        if (!$this->getUser()) {
+            return $this->createNotFoundResponse();
+        }
+
+        return $this->createResourceResponse($this->getUser(), Response::HTTP_OK);
+    }
+
+    /**
      * Add new User.
      *
      * @Route(name="api_user_create", methods={Request::METHOD_POST})
