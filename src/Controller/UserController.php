@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Picture;
+use App\Entity\Review;
 use App\Entity\User;
 use App\Exception\ApiException;
 use App\Form\Filter\UserFilter;
@@ -68,7 +70,7 @@ class UserController extends AbstractController implements ControllerInterface
     /**
      * Show single Users.
      *
-     * @Route(path="/{user}", name="api_user_show", methods={Request::METHOD_GET})
+     * @Route(path="/{username}", name="api_user_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="User")
      * @SWG\Response(
@@ -85,8 +87,10 @@ class UserController extends AbstractController implements ControllerInterface
      *
      * @return JsonResponse
      */
-    public function showAction(User $user = null): JsonResponse
+    public function showAction(string $username): JsonResponse
     {
+        $user = $this->userManager->findUserByUsername($username);
+
         if (!$user) {
             return $this->createNotFoundResponse();
         }
@@ -95,34 +99,66 @@ class UserController extends AbstractController implements ControllerInterface
     }
 
     /**
-     * Show the User.
+     * Show user Reviews.
      *
-     * @Route(path="/account", name="api_user_account_show", methods={Request::METHOD_GET})
+     * @Route(path="/{username}/reviews", name="api_review_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="User")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns user log.",
+     *     description="Returns review of given identifier.",
      *     @SWG\Schema(
      *         type="object",
-     *         title="user",
-     *         @SWG\Items(ref=@Model(type=User::class))
+     *         title="review",
+     *         @SWG\Items(ref=@Model(type=Review::class))
      *     )
      * )
      *
-     * @param Request $request
-     *
-     * @return JsonResponse$
-     *
-     * @Security("is_granted('CAN_SHOW_ACCOUNT_USER', user)")
+     * @param string $username
+     * @return JsonResponse
      */
-    public function showActionAccount(Request $request): JsonResponse
+    public function showUserReviews(string $username): JsonResponse
     {
-        if (!$this->getUser()) {
+        $user = $this->userManager->findUserByUsername($username);
+        $review = $user->getReviews();
+
+
+        if (!$review) {
             return $this->createNotFoundResponse();
         }
 
-        return $this->createResourceResponse($this->getUser(), Response::HTTP_OK);
+        return $this->createResourceResponse($review);
+    }
+
+    /**
+     * Show user Pictures.
+     *
+     * @Route(path="/{username}/pictures", name="api_pictures_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns user pictures.",
+     *     @SWG\Schema(
+     *         type="object",
+     *         title="picture",
+     *         @SWG\Items(ref=@Model(type=Picture::class))
+     *     )
+     * )
+     *
+     * @param string $username
+     * @return JsonResponse
+     */
+    public function showPictures(string $username): JsonResponse
+    {
+        $user = $this->userManager->findUserByUsername($username);
+        $picture = $user->getPictures();
+
+        if (!$picture) {
+            return $this->createNotFoundResponse();
+        }
+
+        return $this->createResourceResponse($picture);
     }
 
     /**

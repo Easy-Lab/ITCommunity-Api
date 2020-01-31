@@ -82,6 +82,7 @@ class ReviewController extends AbstractController implements ControllerInterface
      */
     public function showAction(Review $review = null): JsonResponse
     {
+
         if (!$review) {
             return $this->createNotFoundResponse();
         }
