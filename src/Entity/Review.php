@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ReviewRepository")
  *
- * @JMS\ExclusionPolicy("ALL")
  */
 class Review
 {
@@ -27,7 +26,6 @@ class Review
      *
      * @Assert\NotBlank
      *
-     * @JMS\Expose
      */
     protected $body;
 
@@ -38,7 +36,6 @@ class Review
      *
      * @Assert\NotBlank
      *
-     * @JMS\Expose
      */
     protected $rating;
 
@@ -47,8 +44,6 @@ class Review
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="reviews", cascade={"persist", "remove"})
      *
-     * @JMS\Expose
-     * @JMS\Groups("author")
      */
     protected $author;
 
