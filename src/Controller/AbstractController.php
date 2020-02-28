@@ -173,7 +173,14 @@ abstract class AbstractController extends Controller
         $limit = (1 <= $limit) && ($limit <= 100) ?: 10;
 
         //  Set pages based on the request parameters.
-        $paginator->setMaxPerPage($request->query->get('limit', $limit));
+        if($request->query->get('limit', $limit) > 0) {
+            $paginator->setMaxPerPage($request->query->get('limit', $limit));
+        }
+
+        if($request->query->get('limit', $limit) == 0) {
+            $paginator->setMaxPerPage($paginator->getNbResults());
+        }
+
         $paginator->setCurrentPage($request->query->get('page', 1));
 
         return $paginator;
@@ -199,7 +206,6 @@ abstract class AbstractController extends Controller
             $queryBuilder = $this->get('lexik_form_filter.query_builder_updater')
                 ->addFilterConditions($form, $queryBuilder);
         }
-
         $paginagor = $this->createPaginator($request, $queryBuilder->getQuery());
 
         return $paginagor;

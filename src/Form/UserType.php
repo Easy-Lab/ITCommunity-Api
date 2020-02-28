@@ -26,16 +26,17 @@ class UserType extends AbstractType
             ->add('lastname')
             ->add('email')
             ->add('username')
-            ->add('plainPassword')
             ->add('address')
             ->add('address2')
-            ->add('zipcode')
             ->add('city')
+            ->add('zipcode')
             ->add('phone')
+            ->add('step')
             ->add('informationsEnabled')
             ->add('ip')
             ->add('latitude')
-            ->add('longitude');
+            ->add('longitude')
+            ->add('plainPassword');
     }
 
     /**

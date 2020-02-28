@@ -41,7 +41,9 @@ abstract class AbstractUser implements UserInterface, \Serializable
      *
      * @Assert\NotBlank
      *
-     * @JMS\Expose
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     * )
      */
     protected $lastname;
 
@@ -104,9 +106,8 @@ abstract class AbstractUser implements UserInterface, \Serializable
     /**
      * @var string
      * @ORM\Column(type="string", length=255)
-     * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
-     * )
+     *
+     * @JMS\Expose
      */
     protected $zipcode;
 
@@ -114,9 +115,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @var string
      * @ORM\Column(type="string", length=255)
      *
-     * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
-     * )
+     * @JMS\Expose
      */
     protected $city;
 
@@ -187,7 +186,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="integer")
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
      * )
      */
     protected $step = 1;
@@ -422,11 +421,9 @@ abstract class AbstractUser implements UserInterface, \Serializable
         return $this->zipcode;
     }
 
-    public function setZipcode(string $zipcode): self
+    public function setZipcode(string $zipcode): void
     {
         $this->zipcode = $zipcode;
-
-        return $this;
     }
 
     public function getCity(): ?string

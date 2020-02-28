@@ -64,15 +64,14 @@ class UserSubscriber implements EventSubscriber
 
         if ($user instanceof User) {
             $this->encodePassword($user);
+
             $user->setHash(sha1((string)microtime(true)));
-//            try {
-//                $this->geolocationService->retrieveGeocode($user);
-//            } catch (\Error $e) {
-//            }
-            $this->encryptFields($user);
             $user->setTosAcceptedAt(new \DateTime());
 
-
+            $this->encryptFields($user);
+            $this->userService->setCrypted($user, 'zipcode', $user->getZipcode());
+            $this->userService->setCrypted($user, 'city', $user->getCity());
+            $this->userService->setCrypted($user, 'phone', $user->getPhone());
         }
     }
 
@@ -83,7 +82,15 @@ class UserSubscriber implements EventSubscriber
     {
         $user = $args->getEntity();
         if ($user instanceof User) {
+
             $this->decryptFields($user);
+            $zipcode = $this->userService->getUncrypted($user, 'zipcode');
+            $city = $this->userService->getUncrypted($user, 'city');
+            $phone = $this->userService->getUncrypted($user, 'phone');
+
+            $user->setZipcode($zipcode);
+            $user->setCity($city);
+            $user->setPhone($phone);
         }
     }
 
@@ -97,6 +104,9 @@ class UserSubscriber implements EventSubscriber
 
         if ($user instanceof User) {
             $this->encryptFields($user);
+            $this->userService->setCrypted($user, 'zipcode', $user->getZipcode());
+            $this->userService->setCrypted($user, 'city', $user->getCity());
+            $this->userService->setCrypted($user, 'phone', $user->getPhone());
         }
     }
 
@@ -109,7 +119,15 @@ class UserSubscriber implements EventSubscriber
 
         if ($user instanceof User) {
             $this->encodePassword($user);
+
             $this->decryptFields($user);
+            $zipcode = $this->userService->getUncrypted($user, 'zipcode');
+            $city = $this->userService->getUncrypted($user, 'city');
+            $phone = $this->userService->getUncrypted($user, 'phone');
+
+            $user->setZipcode($zipcode);
+            $user->setCity($city);
+            $user->setPhone($phone);
         }
     }
 
@@ -137,6 +155,13 @@ class UserSubscriber implements EventSubscriber
         $user = $args->getEntity();
         if ($user instanceof User) {
             $this->decryptFields($user);
+            $zipcode = $this->userService->getUncrypted($user, 'zipcode');
+            $city = $this->userService->getUncrypted($user, 'city');
+            $phone = $this->userService->getUncrypted($user, 'phone');
+
+            $user->setZipcode($zipcode);
+            $user->setCity($city);
+            $user->setPhone($phone);
         }
     }
 
@@ -161,9 +186,6 @@ class UserSubscriber implements EventSubscriber
             if ($user->getAddress2()) {
                 $this->userService->setCrypted($user, 'address2', $user->getAddress2());
             }
-            $this->userService->setCrypted($user, 'zipcode', $user->getZipcode());
-            $this->userService->setCrypted($user, 'city', $user->getCity());
-            $this->userService->setCrypted($user, 'phone', $user->getPhone());
         } catch (Exception $e) {
             return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
@@ -180,9 +202,6 @@ class UserSubscriber implements EventSubscriber
         if ($user->getAddress2()) {
             $address2 = $this->userService->getUncrypted($user, 'address2');
         }
-        $zipcode = $this->userService->getUncrypted($user, 'zipcode');
-        $city = $this->userService->getUncrypted($user, 'city');
-        $phone = $this->userService->getUncrypted($user, 'phone');
 
         // Set the entity variables
         try {
@@ -191,9 +210,6 @@ class UserSubscriber implements EventSubscriber
             $user->setEmail($email);
             $user->setAddress($address);
             $user->setAddress2($address2);
-            $user->setZipcode($zipcode);
-            $user->setCity($city);
-            $user->setPhone($phone);
         } catch (Exception $e) {
             return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }

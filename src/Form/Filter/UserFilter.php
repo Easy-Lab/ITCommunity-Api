@@ -18,7 +18,9 @@ class UserFilter extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', Filters\TextFilterType::class);
+            ->add('email', Filters\TextFilterType::class)
+            ->add('username', Filters\TextFilterType::class)
+            ->add('step', Filters\TextFilterType::class);
     }
 
     /**
