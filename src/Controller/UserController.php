@@ -217,7 +217,7 @@ class UserController extends AbstractController implements ControllerInterface
     /**
      * Edit existing User.
      *
-     * @Route(path="/{user}", name="api_user_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/{username}", name="api_user_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="User")
      * @SWG\Response(
@@ -230,14 +230,16 @@ class UserController extends AbstractController implements ControllerInterface
      * )*
      *
      * @param Request $request
-     * @param User|null $user
+     * @param string $username
      *
      * @return JsonResponse
      *
      * @Security("is_granted('CAN_UPDATE_USER', user)")
      */
-    public function updateAction(Request $request, User $user = null): JsonResponse
+    public function updateAction(Request $request, string $username): JsonResponse
     {
+        $user = $this->userManager->findUserByUsername($username);
+
         $data = \json_decode($request->getContent(), true);
         if(isset($data['email'])){
             $userEmailExist = $this->userManager->findUserByEmail($data['email']);
