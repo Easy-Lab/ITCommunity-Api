@@ -184,10 +184,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="integer")
-     *
-     * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
-     * )
+     * @JMS\Expose
      */
     protected $step = 1;
 
