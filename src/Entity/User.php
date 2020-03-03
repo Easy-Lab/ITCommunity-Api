@@ -29,7 +29,7 @@ class User extends AbstractUser implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Review", mappedBy="author", cascade={"persist", "remove"})
      *
      * @JMS\Expose
-     * @JMS\Groups("reviews")
+     * @JMS\Groups({"profile","reviews"})
      */
     protected $reviews;
 
@@ -60,6 +60,8 @@ class User extends AbstractUser implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="user")
+     * @JMS\Expose
+     * @JMS\Groups({"profile","pictures"})
      */
     private $pictures;
 
