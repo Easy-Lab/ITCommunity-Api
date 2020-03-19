@@ -19,7 +19,7 @@ class DeleteReviewVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // you only want to vote if the attribute and subject are what you expect
-        return self::CAN_DELETE_REVIEW === $attribute && ($subject instanceof Review || null === $subject);
+        return self::CAN_DELETE_REVIEW === $attribute && ($subject instanceof User || null === $subject);
     }
 
     /**

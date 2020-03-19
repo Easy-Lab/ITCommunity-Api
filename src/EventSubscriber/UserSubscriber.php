@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\User;
 use App\Service\GeolocationService;
 use App\Service\UserService;
@@ -59,19 +61,24 @@ class UserSubscriber implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $args): void
     {
-        $user = $args->getEntity();
+        $subject = $args->getEntity();
 
+        if ($subject instanceof User) {
+            $this->encodePassword($subject);
+            $subject->setHash(sha1((string)microtime(true)));
+            $subject->setTosAcceptedAt(new \DateTime());
+            $this->encryptFields($subject);
+            $this->userService->setCrypted($subject, 'zipcode', $subject->getZipcode());
+            $this->userService->setCrypted($subject, 'city', $subject->getCity());
+            $this->userService->setCrypted($subject, 'phone', $subject->getPhone());
+        }
 
-        if ($user instanceof User) {
-            $this->encodePassword($user);
+        if ($subject instanceof Message) {
+            $subject->setHash(sha1((string)microtime(true)));
+        }
 
-            $user->setHash(sha1((string)microtime(true)));
-            $user->setTosAcceptedAt(new \DateTime());
-
-            $this->encryptFields($user);
-            $this->userService->setCrypted($user, 'zipcode', $user->getZipcode());
-            $this->userService->setCrypted($user, 'city', $user->getCity());
-            $this->userService->setCrypted($user, 'phone', $user->getPhone());
+        if ($subject instanceof Contact) {
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
         }
     }
 
@@ -80,17 +87,21 @@ class UserSubscriber implements EventSubscriber
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        $user = $args->getEntity();
-        if ($user instanceof User) {
+        $subject = $args->getEntity();
 
-            $this->decryptFields($user);
-            $zipcode = $this->userService->getUncrypted($user, 'zipcode');
-            $city = $this->userService->getUncrypted($user, 'city');
-            $phone = $this->userService->getUncrypted($user, 'phone');
+        if ($subject instanceof User) {
+            $this->decryptFields($subject);
+            $zipcode = $this->userService->getUncrypted($subject, 'zipcode');
+            $city = $this->userService->getUncrypted($subject, 'city');
+            $phone = $this->userService->getUncrypted($subject, 'phone');
+            $subject->setZipcode($zipcode);
+            $subject->setCity($city);
+            $subject->setPhone($phone);
+        }
 
-            $user->setZipcode($zipcode);
-            $user->setCity($city);
-            $user->setPhone($phone);
+        if ($subject instanceof Contact) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
         }
     }
 
@@ -100,13 +111,17 @@ class UserSubscriber implements EventSubscriber
      */
     public function preUpdate(LifecycleEventArgs $args): void
     {
-        $user = $args->getEntity();
+        $subject = $args->getEntity();
 
-        if ($user instanceof User) {
-            $this->encryptFields($user);
-            $this->userService->setCrypted($user, 'zipcode', $user->getZipcode());
-            $this->userService->setCrypted($user, 'city', $user->getCity());
-            $this->userService->setCrypted($user, 'phone', $user->getPhone());
+        if ($subject instanceof User) {
+            $this->encryptFields($subject);
+            $this->userService->setCrypted($subject, 'zipcode', $subject->getZipcode());
+            $this->userService->setCrypted($subject, 'city', $subject->getCity());
+            $this->userService->setCrypted($subject, 'phone', $subject->getPhone());
+        }
+
+        if ($subject instanceof Contact) {
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
         }
     }
 
@@ -115,19 +130,22 @@ class UserSubscriber implements EventSubscriber
      */
     public function postUpdate(LifecycleEventArgs $args): void
     {
-        $user = $args->getEntity();
+        $subject = $args->getEntity();
 
-        if ($user instanceof User) {
-            $this->encodePassword($user);
+        if ($subject instanceof User) {
+            $this->encodePassword($subject);
+            $this->decryptFields($subject);
+            $zipcode = $this->userService->getUncrypted($subject, 'zipcode');
+            $city = $this->userService->getUncrypted($subject, 'city');
+            $phone = $this->userService->getUncrypted($subject, 'phone');
+            $subject->setZipcode($zipcode);
+            $subject->setCity($city);
+            $subject->setPhone($phone);
+        }
 
-            $this->decryptFields($user);
-            $zipcode = $this->userService->getUncrypted($user, 'zipcode');
-            $city = $this->userService->getUncrypted($user, 'city');
-            $phone = $this->userService->getUncrypted($user, 'phone');
-
-            $user->setZipcode($zipcode);
-            $user->setCity($city);
-            $user->setPhone($phone);
+        if ($subject instanceof Contact) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
         }
     }
 
@@ -144,6 +162,9 @@ class UserSubscriber implements EventSubscriber
             if ($entity instanceof User) {
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $entity);
             }
+            if ($entity instanceof Contact) {
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $entity);
+            }
         }
     }
 
@@ -152,16 +173,21 @@ class UserSubscriber implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $args)
     {
-        $user = $args->getEntity();
-        if ($user instanceof User) {
-            $this->decryptFields($user);
-            $zipcode = $this->userService->getUncrypted($user, 'zipcode');
-            $city = $this->userService->getUncrypted($user, 'city');
-            $phone = $this->userService->getUncrypted($user, 'phone');
+        $subject = $args->getEntity();
 
-            $user->setZipcode($zipcode);
-            $user->setCity($city);
-            $user->setPhone($phone);
+        if ($subject instanceof User) {
+            $this->decryptFields($subject);
+            $zipcode = $this->userService->getUncrypted($subject, 'zipcode');
+            $city = $this->userService->getUncrypted($subject, 'city');
+            $phone = $this->userService->getUncrypted($subject, 'phone');
+            $subject->setZipcode($zipcode);
+            $subject->setCity($city);
+            $subject->setPhone($phone);
+        }
+
+        if ($subject instanceof Contact) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
         }
     }
 

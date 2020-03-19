@@ -2,41 +2,56 @@
 
 namespace App\Entity;
 
+use App\Traits\IdColumnTrait;
+use App\Traits\TimeAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\ContactRepository")
+ *
+ * @UniqueEntity({"email"}, message="Email already exists.")
+ *
+ * @JMS\ExclusionPolicy("ALL")
  */
 class Contact
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    use IdColumnTrait;
+    use TimeAwareTrait;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW')"
+     * )
      */
     private $email;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="contact", orphanRemoval=true)
@@ -91,18 +106,6 @@ class Contact
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
 
         return $this;
     }

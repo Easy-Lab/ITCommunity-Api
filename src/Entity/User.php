@@ -29,7 +29,6 @@ class User extends AbstractUser implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Review", mappedBy="author", cascade={"persist", "remove"})
      *
      * @JMS\Expose
-     * @JMS\Groups("reviews")
      */
     protected $reviews;
 
