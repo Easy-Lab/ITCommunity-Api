@@ -59,6 +59,8 @@ class User extends AbstractUser implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="user")
+     * @JMS\Expose
+     * @JMS\Groups({"profile","pictures"})
      */
     private $pictures;
 
