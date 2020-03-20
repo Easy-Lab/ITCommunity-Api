@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Interfaces\RepositoryInterface;
 use App\Repository\AbstractRepository;
+use App\Repository\MessageRepository;
 use App\Resource\PaginationResource;
 use App\Traits\ControllerTrait;
 use Doctrine\Common\Inflector\Inflector;
@@ -197,7 +198,6 @@ abstract class AbstractController extends Controller
         /** @var RepositoryInterface $repository */
         $repository = $this->getRepository();
         $queryBuilder = $repository->getQueryBuilder();
-
         $form = $this->getForm($filterForm);
 
         if ($request->query->has($form->getName())) {
@@ -206,6 +206,7 @@ abstract class AbstractController extends Controller
             $queryBuilder = $this->get('lexik_form_filter.query_builder_updater')
                 ->addFilterConditions($form, $queryBuilder);
         }
+        
         $paginagor = $this->createPaginator($request, $queryBuilder->getQuery());
 
         return $paginagor;

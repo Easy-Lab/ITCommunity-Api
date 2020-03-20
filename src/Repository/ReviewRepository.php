@@ -6,7 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Review;
 use App\Interfaces\RepositoryInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * {@inheritdoc}
@@ -20,7 +20,7 @@ class ReviewRepository extends AbstractRepository implements RepositoryInterface
     /**
      * ReviewRepository constructor.
      *
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {

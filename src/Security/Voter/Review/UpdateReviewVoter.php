@@ -19,7 +19,7 @@ class UpdateReviewVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // you only want to vote if the attribute and subject are what you expect
-        return self::CAN_UPDATE_REVIEW === $attribute && ($subject instanceof Review || null === $subject);
+        return self::CAN_UPDATE_REVIEW === $attribute && ($subject instanceof User || null === $subject);
     }
 
     /**

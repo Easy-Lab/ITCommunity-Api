@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Voter\Review;
 
+use App\Entity\Review;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -18,7 +19,7 @@ class CreateReviewVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // you only want to vote if the attribute and subject are what you expect
-        return self::CAN_CREATE_REVIEW === $attribute && null === $subject;
+        return self::CAN_CREATE_REVIEW === $attribute && ($subject instanceof User || null === $subject);
     }
 
     /**

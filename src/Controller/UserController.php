@@ -83,8 +83,7 @@ class UserController extends AbstractController implements ControllerInterface
      *     )
      * )
      *
-     * @param User|null $user
-     *
+     * @param string $username
      * @return JsonResponse
      */
     public function showAction(string $username): JsonResponse
@@ -106,7 +105,7 @@ class UserController extends AbstractController implements ControllerInterface
      * @SWG\Tag(name="User")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns review of given identifier.",
+     *     description="Returns review of given username.",
      *     @SWG\Schema(
      *         type="object",
      *         title="review",
@@ -128,6 +127,38 @@ class UserController extends AbstractController implements ControllerInterface
         }
 
         return $this->createResourceResponse($review);
+    }
+
+    /**
+     * Show user Message.
+     *
+     * @Route(path="/{username}/messages", name="api_message_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns message of given username.",
+     *     @SWG\Schema(
+     *         type="object",
+     *         title="message",
+     *         @SWG\Items(ref=@Model(type=Message::class))
+     *     )
+     * )
+     *
+     * @param string $username
+     * @return JsonResponse
+     */
+    public function showUserMessage(string $username): JsonResponse
+    {
+        $user = $this->userManager->findUserByUsername($username);
+        $message = $user->getMessages();
+
+
+        if (!$message) {
+            return $this->createNotFoundResponse();
+        }
+
+        return $this->createResourceResponse($message);
     }
 
     /**
@@ -184,7 +215,6 @@ class UserController extends AbstractController implements ControllerInterface
     public function createAction(Request $request, User $user = null): JsonResponse
     {
         $data = \json_decode($request->getContent(), true);
-
         $userEmailExist = $this->userManager->findUserByEmail($data['email']);
         $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
 
