@@ -162,6 +162,38 @@ class UserController extends AbstractController implements ControllerInterface
     }
 
     /**
+     * Show user Evaluation.
+     *
+     * @Route(path="/{username}/evaluations", name="api_evaluation_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns evaluations of given username.",
+     *     @SWG\Schema(
+     *         type="object",
+     *         title="message",
+     *         @SWG\Items(ref=@Model(type=Evaluation::class))
+     *     )
+     * )
+     *
+     * @param string $username
+     * @return JsonResponse
+     */
+    public function showUserEvaluation(string $username): JsonResponse
+    {
+        $user = $this->userManager->findUserByUsername($username);
+        $evaluation = $user->getEvaluations();
+
+
+        if (!$evaluation) {
+            return $this->createNotFoundResponse();
+        }
+
+        return $this->createResourceResponse($evaluation);
+    }
+
+    /**
      * Show user Pictures.
      *
      * @Route(path="/{username}/pictures", name="api_pictures_show", methods={Request::METHOD_GET})

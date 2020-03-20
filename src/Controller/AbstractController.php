@@ -16,7 +16,7 @@ use Doctrine\ORM\Query;
 use JMS\Serializer\SerializationContext;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +29,7 @@ abstract class AbstractController extends Controller
     public const DELETED = ['success' => 'Deleted.'];
     public const NOT_FOUND = ['error' => 'Resource not found.'];
     public const ALREDY_EXIST = ['error' => 'User alredy exist with this email or username.'];
+    public const ALREDY_EVALUATION = ['error' => 'You have alredy evaluate this user.'];
     public const GENERAL_ERROR = ['error' => 'Something went wrong.'];
 
     /**
@@ -137,6 +138,16 @@ abstract class AbstractController extends Controller
     public function createAlredyExistResponse(): JsonResponse
     {
         $this->responseCreator->setData(self::ALREDY_EXIST);
+
+        return $this->responseCreator->getResponse(Response::HTTP_CONFLICT, $this->getEntityResponseField());
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function createAlredyExistEvaluation(): JsonResponse
+    {
+        $this->responseCreator->setData(self::ALREDY_EVALUATION);
 
         return $this->responseCreator->getResponse(Response::HTTP_CONFLICT, $this->getEntityResponseField());
     }

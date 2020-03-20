@@ -7,9 +7,14 @@ use App\Traits\TimeAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
+ *
+ * @JMS\ExclusionPolicy("ALL")
  */
 class Message
 {
@@ -20,32 +25,47 @@ class Message
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Contact", inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $contact;
 
     /**
      * @ORM\Column(type="boolean", options={"default":true})
+     *
+     * @Assert\NotBlank
      */
     private $type;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $question;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose
      */
     private $answer;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
      */
     private $hash;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Assert\NotBlank
      */
     private $user;
 

@@ -100,12 +100,9 @@ class MessageController extends AbstractController implements ControllerInterfac
     public function createAction(Request $request, Message $message = null): JsonResponse
     {
         $data = \json_decode($request->getContent(), true);
-        $contact = $this->contactManager->findContactBy(array('email' => $data['email']));
-        $user = $this->userManager->findUserByUsername($data['username']);
-        dd($contact);
-
         $contact = $this->contactManager->findContactByEmail($data['email']);
         $user = $this->userManager->findUserByUsername($data['username']);
+
         if(!$contact or !$user) {
             return $this->createNotFoundResponse();
         }

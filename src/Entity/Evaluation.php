@@ -2,44 +2,57 @@
 
 namespace App\Entity;
 
+use App\Traits\IdColumnTrait;
+use App\Traits\TimeAwareTrait;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\EvaluationRepository")
+ *
+ * @JMS\ExclusionPolicy("ALL")
  */
 class Evaluation
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    use IdColumnTrait;
+    use TimeAwareTrait;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="evaluations")
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Assert\NotBlank
+     *
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Contact", inversedBy="evaluations")
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
-    private $Contact;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $evaluatedAt;
+    private $contact;
 
     /**
      * @ORM\Column(type="integer")
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $rating;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $feedback;
 
@@ -62,24 +75,12 @@ class Evaluation
 
     public function getContact(): ?Contact
     {
-        return $this->Contact;
+        return $this->contact;
     }
 
     public function setContact(?Contact $Contact): self
     {
-        $this->Contact = $Contact;
-
-        return $this;
-    }
-
-    public function getEvaluatedAt(): ?\DateTimeInterface
-    {
-        return $this->evaluatedAt;
-    }
-
-    public function setEvaluatedAt(\DateTimeInterface $evaluatedAt): self
-    {
-        $this->evaluatedAt = $evaluatedAt;
+        $this->contact = $Contact;
 
         return $this;
     }
