@@ -59,7 +59,7 @@ class Contact
     private $messages;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="Contact")
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="contact")
      */
     private $evaluations;
 

@@ -10,6 +10,7 @@ use App\Form\Filter\EvaluationFilter;
 use App\Interfaces\ControllerInterface;
 use App\Service\Manager\ContactManager;
 use App\Service\Manager\EvaluationManager;
+use App\Service\Manager\MessageManager;
 use App\Service\Manager\UserManager;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
@@ -40,16 +41,23 @@ class EvaluationController extends AbstractController implements ControllerInter
     private $evaluationManager;
 
     /**
+     * @var MessageManager
+     */
+    private $messageManager;
+
+    /**
      * ContactController constructor.
      * @param UserManager $userManager
      * @param ContactManager $contactManager
+     * @param MessageManager $messageManager
      * @param EvaluationManager $evaluationManager
      */
-    public function __construct(UserManager $userManager, ContactManager $contactManager, EvaluationManager $evaluationManager)
+    public function __construct(UserManager $userManager, ContactManager $contactManager, MessageManager $messageManager, EvaluationManager $evaluationManager)
     {
         parent::__construct(Evaluation::class);
         $this->userManager = $userManager;
         $this->contactManager = $contactManager;
+        $this->messageManager = $messageManager;
         $this->evaluationManager = $evaluationManager;
     }
 
@@ -132,15 +140,16 @@ class EvaluationController extends AbstractController implements ControllerInter
     public function createAction(Request $request, Evaluation $evaluation = null): JsonResponse
     {
         $data = \json_decode($request->getContent(), true);
-        $contact = $this->contactManager->findContactByEmail($data['email']);
-        $user = $this->userManager->findUserByUsername($data['username']);
-        $evaluationExist = $this->evaluationManager->findEvaluationBy(array('user' => $user->getId(), 'contact' => $contact->getId()));
+        $message = $this->messageManager->findMessageBy(array('hash' => $data['hash']));
+        $contact = $message->getContact();
+        $user = $message->getUser();
+        $evaluationExist = $this->evaluationManager->findEvaluationBy(array('user' => $user, 'contact' => $contact));
 
-        if($evaluationExist) {
+        if ($evaluationExist) {
             return $this->createAlredyExistEvaluation();
         }
 
-        if(!$user or !$contact) {
+        if (!$user or !$contact) {
             return $this->createNotFoundResponse();
         }
 
@@ -148,6 +157,7 @@ class EvaluationController extends AbstractController implements ControllerInter
             $evaluation = new Evaluation();
             $evaluation->setContact($contact);
             $evaluation->setUser($user);
+            $evaluation->setMessage($message);
         }
 
         $form = $this->getForm(

@@ -39,6 +39,16 @@ class Evaluation
     private $contact;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Message", inversedBy="evaluations")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
+     */
+    private $message;
+
+    /**
      * @ORM\Column(type="integer")
      *
      * @Assert\NotBlank
@@ -78,9 +88,21 @@ class Evaluation
         return $this->contact;
     }
 
-    public function setContact(?Contact $Contact): self
+    public function setContact(?Contact $contact): self
     {
-        $this->contact = $Contact;
+        $this->contact = $contact;
+
+        return $this;
+    }
+
+    public function getMessage(): ?Message
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?Message $message): self
+    {
+        $this->message = $message;
 
         return $this;
     }

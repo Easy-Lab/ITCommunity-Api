@@ -70,12 +70,19 @@ class Message
     private $user;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="message")
+     *
+     */
+    private $evaluations;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="message")
      */
     private $points;
 
     public function __construct()
     {
+        $this->evaluations = new ArrayCollection();
         $this->points = new ArrayCollection();
     }
 
@@ -154,6 +161,14 @@ class Message
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Evaluation[]
+     */
+    public function getEvaluation(): Collection
+    {
+        return $this->evaluations;
     }
 
     /**
