@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\Point;
 use App\Exception\ApiException;
 use App\Form\Filter\MessageFilter;
 use App\Form\MessageAnswerType;
@@ -13,6 +14,7 @@ use App\Form\MessageType;
 use App\Interfaces\ControllerInterface;
 use App\Service\Manager\UserManager;
 use App\Service\Manager\ContactManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -123,6 +125,13 @@ class MessageController extends AbstractController implements ControllerInterfac
 
         try {
             $this->formHandler->process($request, $form);
+            $point = new Point();
+            $point->setMessage($message);
+            $point->setUser($user);
+            $point->setAmount(25);
+            $point->setType('Question');
+            $this->entityManager->persist($point);
+            $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }

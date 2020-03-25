@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Entity\Evaluation;
+use App\Entity\Point;
 use App\Exception\ApiException;
 use App\Form\EvaluationType;
 use App\Form\Filter\EvaluationFilter;
@@ -141,6 +142,7 @@ class EvaluationController extends AbstractController implements ControllerInter
     {
         $data = \json_decode($request->getContent(), true);
         $message = $this->messageManager->findMessageBy(array('hash' => $data['hash']));
+        $rating = $data['rating'];
         $contact = $message->getContact();
         $user = $message->getUser();
         $evaluationExist = $this->evaluationManager->findEvaluationBy(array('user' => $user, 'contact' => $contact));
@@ -170,6 +172,13 @@ class EvaluationController extends AbstractController implements ControllerInter
 
         try {
             $this->formHandler->process($request, $form);
+            $point = new Point();
+            $point->setEvaluation($evaluation);
+            $point->setUser($user);
+            $point->setAmount((($rating-1)*5));
+            $point->setType('Evaluation');
+            $this->entityManager->persist($point);
+            $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }

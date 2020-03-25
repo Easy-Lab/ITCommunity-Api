@@ -2,9 +2,12 @@
 
 namespace App\Service;
 
+use App\Entity\User;
 use App\Utils\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserService
@@ -15,12 +18,16 @@ class UserService
     protected $container;
     protected $security;
 
-    public function __construct(ContainerInterface $container, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Security $security)
+    /** @var  TokenStorageInterface */
+    private $tokenStorage;
+
+    public function __construct(ContainerInterface $container, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Security $security, TokenStorageInterface $storage)
     {
         $this->em = $em;
         $this->encoder = $encoder;
         $this->container = $container;
         $this->security = $security;
+        $this->tokenStorage = $storage;
     }
 
     public function getUncrypted($user, $column)
@@ -48,5 +55,19 @@ class UserService
     public function raw2hash($email)
     {
         return hash('sha1', $email . $this->container->getParameter('secret'));
+    }
+
+    public function getCurrentUser()
+    {
+        $token = $this->tokenStorage->getToken();
+        if ($token instanceof TokenInterface) {
+
+            /** @var User $user */
+            $user = $token->getUser();
+            return $user;
+
+        } else {
+            return null;
+        }
     }
 }

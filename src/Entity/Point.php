@@ -2,66 +2,75 @@
 
 namespace App\Entity;
 
+use App\Traits\IdColumnTrait;
+use App\Traits\TimeAwareTrait;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\PointRepository")
+ *
+ * @JMS\ExclusionPolicy("ALL")
  */
 class Point
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    use IdColumnTrait;
+    use TimeAwareTrait;
 
     /**
      * @ORM\Column(type="integer")
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $amount;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $type;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="points")
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Message", inversedBy="points")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Message")
+     *
+     * @JMS\Expose
      */
     private $message;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Evaluation", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\Evaluation")
+     *
+     * @JMS\Expose
      */
     private $evaluation;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Review")
+     *
+     * @JMS\Expose
+     */
+    private $review;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     public function getAmount(): ?int
@@ -120,6 +129,18 @@ class Point
     public function setEvaluation(?Evaluation $evaluation): self
     {
         $this->evaluation = $evaluation;
+
+        return $this;
+    }
+
+    public function getReview(): ?Review
+    {
+        return $this->review;
+    }
+
+    public function setReview(?Review $review): self
+    {
+        $this->review = $review;
 
         return $this;
     }
