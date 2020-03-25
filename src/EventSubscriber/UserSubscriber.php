@@ -24,7 +24,9 @@ class UserSubscriber implements EventSubscriber
      * @var UserPasswordEncoderInterface
      */
     protected $encoder;
+
     protected $userService;
+
     protected $geolocationService;
 
     /**
@@ -32,6 +34,7 @@ class UserSubscriber implements EventSubscriber
      *
      * @param UserPasswordEncoderInterface $encoder
      * @param UserService $userService
+     * @param GeolocationService $geolocationService
      */
     public function __construct(UserPasswordEncoderInterface $encoder, UserService $userService, GeolocationService $geolocationService)
     {
@@ -133,7 +136,6 @@ class UserSubscriber implements EventSubscriber
         $subject = $args->getEntity();
 
         if ($subject instanceof User) {
-            $this->encodePassword($subject);
             $this->decryptFields($subject);
             $zipcode = $this->userService->getUncrypted($subject, 'zipcode');
             $city = $this->userService->getUncrypted($subject, 'city');

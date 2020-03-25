@@ -7,12 +7,15 @@ namespace App\Controller;
 
 use App\Entity\Picture;
 use App\Entity\Review;
+use App\Entity\Point;
 use App\Entity\User;
 use App\Exception\ApiException;
 use App\Form\Filter\UserFilter;
 use App\Form\UserType;
 use App\Interfaces\ControllerInterface;
+use App\Service\Manager\PointManager;
 use App\Service\Manager\UserManager;
+use App\Service\UserService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
@@ -26,17 +29,31 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends AbstractController implements ControllerInterface
 {
+    /**
+     * @var UserManager
+     */
     private $userManager;
+
+    /**
+     * @var PointManager
+     */
+    private $pointManager;
+
+    protected $userService;
 
     /**
      * UserController constructor.
      * @param UserManager $userManager
+     * @param PointManager $pointManager
+     * @param UserService $userService
      */
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManager $userManager, PointManager $pointManager, UserService $userService)
     {
         parent::__construct(User::class);
 
         $this->userManager = $userManager;
+        $this->pointManager = $pointManager;
+        $this->userService = $userService;
     }
 
     /**
@@ -126,7 +143,7 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        return $this->createResourceResponse($review);
+        return $this->createResourceResponse($review,Response::HTTP_OK);
     }
 
     /**
@@ -158,7 +175,7 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        return $this->createResourceResponse($message);
+        return $this->createResourceResponse($message, Response::HTTP_OK);
     }
 
     /**
@@ -190,7 +207,47 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        return $this->createResourceResponse($evaluation);
+        return $this->createResourceResponse($evaluation,Response::HTTP_OK);
+    }
+
+    /**
+     * Show user Point.
+     *
+     * @Route(path="/my/points", name="api_point_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns point and total.",
+     *     @SWG\Schema(
+     *         type="object",
+     *         title="message",
+     *         @SWG\Items(ref=@Model(type=Point::class))
+     *     )
+     * )
+     *
+     * @return JsonResponse
+     *
+     * @Security("is_granted('CAN_UPDATE_USER', user)")
+     */
+    public function showUserPoint(): JsonResponse
+    {
+        $user = $this->userService->getCurrentUser();
+        $points = $this->pointManager->findEvaluationsBy(array('user' => $user));
+        $total = 0;
+
+        if (!$points) {
+            return $this->createNotFoundResponse();
+        }
+
+        foreach ($points as $point) {
+            $total += $point->getAmount();
+        }
+
+        $jsonPoints = array("points" => $points);
+        $jsonTotal = array("total_points" => $total);
+
+        return $this->createResourceResponse(array_merge((array)$jsonPoints, $jsonTotal),Response::HTTP_OK);
     }
 
     /**
@@ -251,7 +308,7 @@ class UserController extends AbstractController implements ControllerInterface
         $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
 
 
-        if($userEmailExist or $userUsernameExist) {
+        if ($userEmailExist or $userUsernameExist) {
             return $this->createAlredyExistResponse();
         }
 
@@ -303,14 +360,14 @@ class UserController extends AbstractController implements ControllerInterface
         $user = $this->userManager->findUserByUsername($username);
 
         $data = \json_decode($request->getContent(), true);
-        if(isset($data['email'])){
+        if (isset($data['email'])) {
             $userEmailExist = $this->userManager->findUserByEmail($data['email']);
         }
-        if(isset($data['username'])){
+        if (isset($data['username'])) {
             $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
         }
 
-        if(isset($userEmailExist) or isset($userUsernameExist)) {
+        if (isset($userEmailExist) or isset($userUsernameExist)) {
             return $this->createAlredyExistResponse();
         }
 

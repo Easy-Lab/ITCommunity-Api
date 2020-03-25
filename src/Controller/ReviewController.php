@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Point;
 use App\Entity\Review;
 use App\Exception\ApiException;
 use App\Form\Filter\ReviewFilter;
@@ -98,7 +99,7 @@ class ReviewController extends AbstractController implements ControllerInterface
      * @SWG\Tag(name="Review")
      * @SWG\Response(
      *     response=200,
-     *     description="Updates Review of given identifier and returns the updated object.",
+     *     description="Add new Review.",
      *     @SWG\Schema(
      *         type="object",
      *         @SWG\Items(ref=@Model(type=Review::class))
@@ -129,6 +130,13 @@ class ReviewController extends AbstractController implements ControllerInterface
 
         try {
             $this->formHandler->process($request, $form);
+            $point = new Point();
+            $point->setReview($review);
+            $point->setUser($this->getUser());
+            $point->setAmount(25);
+            $point->setType('Review');
+            $this->entityManager->persist($point);
+            $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
