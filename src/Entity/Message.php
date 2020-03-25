@@ -14,7 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
  *
- * @JMS\ExclusionPolicy("ALL")
  */
 class Message
 {
@@ -28,7 +27,6 @@ class Message
      *
      * @Assert\NotBlank
      *
-     * @JMS\Expose
      */
     private $contact;
 
@@ -37,7 +35,6 @@ class Message
      *
      * @Assert\NotBlank
      *
-     * @JMS\Expose
      */
     private $type;
 
@@ -46,20 +43,20 @@ class Message
      *
      * @Assert\NotBlank
      *
-     * @JMS\Expose
      */
     private $question;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @JMS\Expose
      */
     private $answer;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)")
      */
     private $hash;
 
@@ -68,12 +65,14 @@ class Message
      * @ORM\JoinColumn(nullable=false)
      *
      * @Assert\NotBlank
+     *
      */
     private $user;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="message")
      *
+     * @JMS\Exclude();
      */
     private $evaluations;
 

@@ -54,7 +54,7 @@ class MessageController extends AbstractController implements ControllerInterfac
     /**
      * Get all Messages.
      *
-     * @Route(name="api_message_list", methods={Request::METHOD_GET})
+     * @Route(name="api_messages_list", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="Message")
      * @SWG\Response(
@@ -78,6 +78,34 @@ class MessageController extends AbstractController implements ControllerInterfac
                 MessageFilter::class
             )
         );
+    }
+
+    /**
+     * Show single Message.
+     *
+     * @Route(path="/{hash}", name="api_single_message_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="Message")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns message of given hash.",
+     *     @SWG\Schema(
+     *         type="object",
+     *         title="message",
+     *         @SWG\Items(ref=@Model(type=Message::class))
+     *     )
+     * )
+     *
+     * @param Message|null $message
+     * @return JsonResponse
+     */
+    public function showAction(Message $message = null): JsonResponse
+    {
+        if (!$message) {
+            return $this->createNotFoundResponse();
+        }
+
+        return $this->createResourceResponse($message);
     }
 
     /**
@@ -143,7 +171,7 @@ class MessageController extends AbstractController implements ControllerInterfac
     /**
      * Edit existing Message.
      *
-     * @Route(path="/{message}", name="api_message_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/{hash}", name="api_message_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="Message")
      * @SWG\Response(
@@ -187,7 +215,7 @@ class MessageController extends AbstractController implements ControllerInterfac
     /**
      * Message Answer.
      *
-     * @Route(path="/answer/{message}", name="api_message_answer_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/answer/{hash}", name="api_message_answer_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="Message")
      * @SWG\Response(
@@ -232,7 +260,7 @@ class MessageController extends AbstractController implements ControllerInterfac
     /**
      * Delete Message.
      *
-     * @Route(path="/{message}", name="api_message_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_message_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="Message")
      * @SWG\Response(
