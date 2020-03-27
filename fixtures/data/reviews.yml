@@ -3,7 +3,7 @@ App\Entity\Review:
     type: <paragraph(1, 2)>
     body: <paragraph(3, 8)>
     rating: <numberBetween(1, 10)>
-    author: '@user*'
+    user: '@user*'
     name_component: <paragraph(1, 2)>
     company_component: <paragraph(1, 2)>
     other_information_component: <paragraph(1, 2)>
