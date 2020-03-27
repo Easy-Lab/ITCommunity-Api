@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as JMS;
 
-trait TimeAwareTrait
+trait TimeAwareTraitPublic
 {
     /**
      * @var DateTimeInterface
@@ -17,9 +17,7 @@ trait TimeAwareTrait
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      *
-     * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
-     * )
+     * @JMS\Expose
      */
     protected $created;
 
@@ -29,9 +27,7 @@ trait TimeAwareTrait
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
      *
-     * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
-     * )
+     * @JMS\Expose
      */
     protected $updated;
 
@@ -82,5 +78,5 @@ trait TimeAwareTrait
     {
         return $this->updated;
     }
-    
+
 }

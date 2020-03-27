@@ -24,32 +24,38 @@ abstract class AbstractUser implements UserInterface, \Serializable
     use TimeAwareTrait;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="string")
-     *
-     * @Assert\NotBlank
-     *
-     * @JMS\Expose
-     */
-    protected $firstname;
-
-    /**
-     * @var string
+     * @SWG\Property(
+     *     type="string",
+     *     @SWG\Items(type="string")
+     * )
      *
      * @ORM\Column(type="string")
      *
      * @Assert\NotBlank
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_SHOW_ACCOUNT_USER', object)"
+     * )
+     */
+    protected $firstname;
+
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_SHOW_ACCOUNT_USER', object)"
      * )
      */
     protected $lastname;
 
 
     /**
-     * @var string
+     * @SWG\Property(
+     *     type="string",
+     *     @SWG\Items(type="string")
+     * )
      *
      * @ORM\Column(type="string", unique=true)
      *
@@ -66,13 +72,14 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @Assert\NotBlank
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $email;
 
     /**
      * @var string
+     *
      */
     protected $plainPassword;
 
@@ -88,7 +95,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $address;
@@ -98,13 +105,17 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $address2;
 
     /**
-     * @var string
+     * @SWG\Property(
+     *     type="string",
+     *     @SWG\Items(type="string")
+     * )
+     *
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose
@@ -112,7 +123,11 @@ abstract class AbstractUser implements UserInterface, \Serializable
     protected $zipcode;
 
     /**
-     * @var string
+     * @SWG\Property(
+     *     type="string",
+     *     @SWG\Items(type="string")
+     * )
+     *
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose
@@ -123,7 +138,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $phone;
@@ -132,7 +147,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="boolean")
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $informationsEnabled;
@@ -141,7 +156,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="datetime", nullable=true)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('USER_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $tosAcceptedAt;
@@ -150,7 +165,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="boolean")
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $isBanned = false;
@@ -159,7 +174,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="datetime", nullable=true)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $deletedAt;
@@ -168,7 +183,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $deletedReason;
@@ -177,13 +192,14 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('MODERATOR_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $deletedFeedback;
 
     /**
      * @ORM\Column(type="integer")
+     *
      * @JMS\Expose
      */
     protected $step = 1;
@@ -204,21 +220,18 @@ abstract class AbstractUser implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
      */
     protected $hash;
 
     /**
-     * @var array
-     *
-     * @SWG\Property(
-     *     type="array",
-     *     @SWG\Items(type="string")
-     * )
-     *
      * @ORM\Column(type="json")
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_DELETE_USER', object)"
      * )
      */
     protected $roles = ['ROLE_USER'];
@@ -227,7 +240,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_DELETE_USER', object)"
      * )
      */
     protected $ip;

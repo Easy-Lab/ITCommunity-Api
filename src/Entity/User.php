@@ -26,24 +26,34 @@ class User extends AbstractUser implements UserInterface
     /**
      * @var ArrayCollection|Review[]
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Review", mappedBy="author", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Review", mappedBy="user", cascade={"persist", "remove"})
      *
      * @JMS\Expose
+     * @JMS\Groups("reviews")
      */
     protected $reviews;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="user", cascade={"persist", "remove"})
+     *
+     * @JMS\Expose
+     * @JMS\Groups("points")
      */
     private $points;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="user", orphanRemoval=true)
+     *
+     * @JMS\Expose
+     * @JMS\Groups("messages")
      */
     private $messages;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="user", orphanRemoval=true)
+     *
+     * @JMS\Expose
+     * @JMS\Groups("evaluations")
      */
     private $evaluations;
 
@@ -59,8 +69,9 @@ class User extends AbstractUser implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="user")
+     *
      * @JMS\Expose
-     * @JMS\Groups({"profile","pictures"})
+     * @JMS\Groups("pictures")
      */
     private $pictures;
 

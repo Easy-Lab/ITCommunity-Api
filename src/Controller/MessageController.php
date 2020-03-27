@@ -90,7 +90,7 @@ class MessageController extends AbstractController implements ControllerInterfac
      *     response=200,
      *     description="Returns message of given hash.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="message",
      *         @SWG\Items(ref=@Model(type=Message::class))
      *     )
@@ -118,7 +118,7 @@ class MessageController extends AbstractController implements ControllerInterfac
      *     response=200,
      *     description="Updates Message of given identifier and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Message::class))
      *     )
      * )
@@ -176,9 +176,9 @@ class MessageController extends AbstractController implements ControllerInterfac
      * @SWG\Tag(name="Message")
      * @SWG\Response(
      *     response=200,
-     *     description="Updates Message of given identifier and returns the updated object.",
+     *     description="Updates Message of given hash and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Message::class))
      *     )
      * )
@@ -187,7 +187,7 @@ class MessageController extends AbstractController implements ControllerInterfac
      * @param Message|null $message
      * @return JsonResponse
      *
-     * @Security("is_granted('CAN_UPDATE_USER', user)")
+     * @Security("is_granted('CAN_DELETE_MESSAGE', message)")
      */
     public function updateAction(Request $request, Message $message = null): JsonResponse
     {
@@ -220,9 +220,9 @@ class MessageController extends AbstractController implements ControllerInterfac
      * @SWG\Tag(name="Message")
      * @SWG\Response(
      *     response=200,
-     *     description="Updates Answer Message of given identifier and returns the updated object.",
+     *     description="Add answer with hash of message and returns the updated object",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Message::class))
      *     )
      * )
@@ -231,7 +231,7 @@ class MessageController extends AbstractController implements ControllerInterfac
      * @param Message|null $message
      * @return JsonResponse
      *
-     * @Security("is_granted('CAN_UPDATE_USER', message)")
+     * @Security("is_granted('CAN_UPDATE_MESSAGE', message)")
      */
     public function updateAnswerAction(Request $request, Message $message = null): JsonResponse
     {
@@ -266,16 +266,12 @@ class MessageController extends AbstractController implements ControllerInterfac
      * @SWG\Response(
      *     response=200,
      *     description="Delete message of given identifier and returns the empty object.",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @SWG\Items(ref=@Model(type=Message::class))
-     *     )
      * )
      *
      * @param Message|null $message
      * @return JsonResponse
      *
-     * @Security("is_granted('CAN_DELETE_USER', user)")
+     * @Security("is_granted('CAN_DELETE_MESSAGE', message)")
      */
     public function deleteAction(Message $message = null): JsonResponse
     {

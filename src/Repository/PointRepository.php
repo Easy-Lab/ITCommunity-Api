@@ -19,11 +19,11 @@ class PointRepository extends AbstractRepository implements RepositoryInterface
         parent::__construct($registry, Point::class);
     }
 
-    public function topUser($limit = null) {
+    public function topUser() {
         return $this->createQueryBuilder('p')
-            ->select('p as points, SUM(p.amount) as total_points')
+            ->select('u.username, SUM(p.amount) as total_points')
             ->join('p.user', 'u')
-            ->groupBy('p.user')
+            ->groupBy('u')
             ->orderBy('total_points', 'DESC')
             ->setMaxResults(10)
             ->getQuery()

@@ -1,18 +1,15 @@
 <?php
 
-declare(strict_types=1);
 
-namespace App\Security\Voter\Picture;
+namespace App\Security\Voter\Contact;
 
-use App\Entity\Picture;
-use App\Entity\Review;
-use App\Entity\User;
+use App\Entity\Contact;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class UpdatePictureVoter extends Voter
+class UpdateContactVoter extends Voter
 {
-    public const CAN_UPDATE_PICTURE = 'CAN_UPDATE_PICTURE';
+    public const CAN_UPDATE_CONTACT = 'CAN_UPDATE_CONTACT';
 
     /**
      * {@inheritdoc}
@@ -20,7 +17,7 @@ class UpdatePictureVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // You only want to vote if the attribute and subject are what you expect
-        return self::CAN_UPDATE_PICTURE === $attribute && ($subject instanceof Picture || null === $subject);
+        return self::CAN_UPDATE_CONTACT === $attribute && ($subject instanceof Contact || null === $subject);
     }
 
     /**
@@ -36,13 +33,6 @@ class UpdatePictureVoter extends Voter
         // Allow controller handle not found subject
         if (null === $subject) {
             return true;
-        }
-
-        $user = $token->getUser();
-
-        // Allow user to delete her picture
-        if ($subject instanceof Picture) {
-            return $subject->getUser()->getId() === $user->getId();
         }
 
         return false;

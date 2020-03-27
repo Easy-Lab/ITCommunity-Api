@@ -129,7 +129,7 @@ class EvaluationController extends AbstractController implements ControllerInter
      *     response=200,
      *     description="Add new Evaluation.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Evaluation::class))
      *     )
      * )
@@ -196,7 +196,7 @@ class EvaluationController extends AbstractController implements ControllerInter
      *     response=200,
      *     description="Updates Evaluation of given identifier and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Evaluation::class))
      *     )
      * )
@@ -239,10 +239,6 @@ class EvaluationController extends AbstractController implements ControllerInter
      * @SWG\Response(
      *     response=200,
      *     description="Delete Evaluation of given identifier and returns the empty object.",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @SWG\Items(ref=@Model(type=Evaluation::class))
-     *     )
      * )
      *
      * @param Evaluation|null $evaluation

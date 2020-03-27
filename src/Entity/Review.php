@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Traits\IdColumnTrait;
-use App\Traits\TimeAwareTrait;
+use App\Traits\TimeAwareTraitPublic;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Validator\Constraints as Assert;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\ReviewRepository")
  *
+ * @JMS\ExclusionPolicy("ALL")
  */
 class Review
 {
     use IdColumnTrait;
-    use TimeAwareTrait;
+    use TimeAwareTraitPublic;
 
     /**
      * @var string
@@ -26,6 +30,7 @@ class Review
      *
      * @Assert\NotBlank
      *
+     * @JMS\Expose
      */
     protected $body;
 
@@ -36,6 +41,7 @@ class Review
      *
      * @Assert\NotBlank
      *
+     * @JMS\Expose
      */
     protected $rating;
 
@@ -44,29 +50,48 @@ class Review
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="reviews", cascade={"persist", "remove"})
      *
+     * @SWG\Property(ref=@Model(type=Review::class))
+     *
+     * @JMS\Expose
+     * @JMS\Groups("user")
      */
-    protected $author;
-
+    protected $user;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
      */
     private $nameComponent;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
      */
     private $companyComponent;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose
      */
     private $otherInformationComponent;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
      */
     private $type;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_REVIEW', object)")
+     */
+    private $hash;
 
     /**
      * @return string|null
@@ -111,19 +136,18 @@ class Review
     /**
      * @return User|null
      */
-    public function getAuthor(): ?User
+    public function getUser(): ?User
     {
-        return $this->author;
+        return $this->user;
     }
 
     /**
-     * @param User|null $author
-     *
+     * @param User|null $user
      * @return Review
      */
-    public function setAuthor(?User $author): self
+    public function setUser(?User $user): self
     {
-        $this->author = $author;
+        $this->user = $user;
 
         return $this;
     }
@@ -176,14 +200,40 @@ class Review
         $this->otherInformationComponent = $otherInformationComponent;
     }
 
+    /**
+     * @return string|null
+     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
+    /**
+     * @param string $type
+     * @return Review
+     */
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @param string $hash
+     * @return Review
+     */
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
 
         return $this;
     }

@@ -2,19 +2,20 @@
 
 namespace App\Entity;
 
+use App\Traits\IdColumnTrait;
+use App\Traits\TimeAwareTraitPublic;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PublicChatRepository")
+ * @JMS\ExclusionPolicy("ALL")
  */
 class PublicChat
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    use IdColumnTrait;
+    use TimeAwareTraitPublic;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="publicChats")
@@ -24,13 +25,10 @@ class PublicChat
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank
      */
     private $message;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
 
     public function getId(): ?int
     {
@@ -57,18 +55,6 @@ class PublicChat
     public function setMessage(string $message): self
     {
         $this->message = $message;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
 
         return $this;
     }
