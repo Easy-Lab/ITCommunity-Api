@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Swagger\Annotations as SWG;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -43,23 +44,33 @@ class Contact
     private $lastname;
 
     /**
+     * @SWG\Property(
+     *     type="string",
+     *     @SWG\Items(type="string")
+     * )
+     *
      * @ORM\Column(type="string", length=255)
      *
+     * @Assert\Email
      * @Assert\NotBlank
      *
-     * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('ADMIN_VIEW')"
-     * )
+     * @JMS\Expose(if="service('security.authorization_checker').isGranted('CAN_DELETE_CONTACT', object)")
      */
     private $email;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="contact", orphanRemoval=true)
+     *
+     * @JMS\Expose
+     * @JMS\Groups("messages")
      */
     private $messages;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Evaluation", mappedBy="contact")
+     *
+     * @JMS\Expose
+     * @JMS\Groups("evaluations")
      */
     private $evaluations;
 

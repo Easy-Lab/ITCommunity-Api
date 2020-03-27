@@ -5,9 +5,13 @@ namespace App\Entity;
 use App\Traits\IdColumnTrait;
 use App\Traits\TimeAwareTrait;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\PictureRepository")
+ *
+ * @JMS\ExclusionPolicy("ALL")
  */
 class Picture
 {
@@ -16,16 +20,22 @@ class Picture
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="pictures")
+     *
+     * @JMS\Expose
      */
     private $user;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
      */
     private $path;
 

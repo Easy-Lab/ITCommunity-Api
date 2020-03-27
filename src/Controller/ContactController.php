@@ -47,7 +47,7 @@ class ContactController extends AbstractController implements ControllerInterfac
      * @SWG\Tag(name="Contact")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns the list of contacts",
+     *     description="Returns list of contacts",
      *     @SWG\Schema(
      *         type="array",
      *         @SWG\Items(ref=@Model(type=Contact::class))
@@ -78,7 +78,7 @@ class ContactController extends AbstractController implements ControllerInterfac
      *     response=200,
      *     description="Returns contact of given identifier.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="contact",
      *         @SWG\Items(ref=@Model(type=Contact::class))
      *     )
@@ -105,9 +105,9 @@ class ContactController extends AbstractController implements ControllerInterfac
      * @SWG\Tag(name="Contact")
      * @SWG\Response(
      *     response=200,
-     *     description="Updates Contact of given identifier and returns the updated object.",
+     *     description="Add new contact.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Contact::class))
      *     )
      * )
@@ -157,7 +157,7 @@ class ContactController extends AbstractController implements ControllerInterfac
      *     response=200,
      *     description="Updates Contact of given identifier and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Contact::class))
      *     )
      * )
@@ -166,7 +166,7 @@ class ContactController extends AbstractController implements ControllerInterfac
      * @param Contact|null $contact
      * @return JsonResponse
      *
-     * @Security("is_granted('CAN_UPDATE_USER', user)")
+     * @Security("is_granted('CAN_UPDATE_CONTACT', contact)")
      */
     public function updateAction(Request $request, Contact $contact = null): JsonResponse
     {
@@ -200,17 +200,13 @@ class ContactController extends AbstractController implements ControllerInterfac
      * @SWG\Tag(name="Contact")
      * @SWG\Response(
      *     response=200,
-     *     description="Delete Contact of given identifier and returns the empty object.",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @SWG\Items(ref=@Model(type=Contact::class))
-     *     )
+     *     description="Delete Contact of given identifier and returns the empty object."
      * )
      *
      * @param Contact|null $contact
      * @return JsonResponse
      *
-     * @Security("is_granted('CAN_DELETE_USER', user)")
+     * @Security("is_granted('CAN_DELETE_CONTACT', contact)")
      */
     public function deleteAction(Contact $contact = null): JsonResponse
     {

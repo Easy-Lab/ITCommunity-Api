@@ -39,6 +39,9 @@ class UserController extends AbstractController implements ControllerInterface
      */
     private $pointManager;
 
+    /**
+     * @var UserService
+     */
     protected $userService;
 
     /**
@@ -47,7 +50,11 @@ class UserController extends AbstractController implements ControllerInterface
      * @param PointManager $pointManager
      * @param UserService $userService
      */
-    public function __construct(UserManager $userManager, PointManager $pointManager, UserService $userService)
+    public function __construct(
+        UserManager $userManager,
+        PointManager $pointManager,
+        UserService $userService
+    )
     {
         parent::__construct(User::class);
 
@@ -92,9 +99,9 @@ class UserController extends AbstractController implements ControllerInterface
      * @SWG\Tag(name="User")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns user of given identifier.",
+     *     description="Returns user of given username.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="user",
      *         @SWG\Items(ref=@Model(type=User::class))
      *     )
@@ -124,7 +131,7 @@ class UserController extends AbstractController implements ControllerInterface
      *     response=200,
      *     description="Returns review of given username.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="review",
      *         @SWG\Items(ref=@Model(type=Review::class))
      *     )
@@ -143,7 +150,7 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        return $this->createResourceResponse($review,Response::HTTP_OK);
+        return $this->createResourceResponse($review, Response::HTTP_OK);
     }
 
     /**
@@ -156,7 +163,7 @@ class UserController extends AbstractController implements ControllerInterface
      *     response=200,
      *     description="Returns message of given username.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="message",
      *         @SWG\Items(ref=@Model(type=Message::class))
      *     )
@@ -188,7 +195,7 @@ class UserController extends AbstractController implements ControllerInterface
      *     response=200,
      *     description="Returns evaluations of given username.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="message",
      *         @SWG\Items(ref=@Model(type=Evaluation::class))
      *     )
@@ -207,7 +214,7 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        return $this->createResourceResponse($evaluation,Response::HTTP_OK);
+        return $this->createResourceResponse($evaluation, Response::HTTP_OK);
     }
 
     /**
@@ -220,7 +227,7 @@ class UserController extends AbstractController implements ControllerInterface
      *     response=200,
      *     description="Returns point and total.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="message",
      *         @SWG\Items(ref=@Model(type=Point::class))
      *     )
@@ -247,7 +254,7 @@ class UserController extends AbstractController implements ControllerInterface
         $jsonPoints = array("points" => $points);
         $jsonTotal = array("total_points" => $total);
 
-        return $this->createResourceResponse(array_merge((array)$jsonPoints, $jsonTotal),Response::HTTP_OK);
+        return $this->createResourceResponse(array_merge((array)$jsonPoints, $jsonTotal), Response::HTTP_OK);
     }
 
     /**
@@ -258,9 +265,9 @@ class UserController extends AbstractController implements ControllerInterface
      * @SWG\Tag(name="User")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns user pictures.",
+     *     description="Returns pictures of given username.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="picture",
      *         @SWG\Items(ref=@Model(type=Picture::class))
      *     )
@@ -291,7 +298,7 @@ class UserController extends AbstractController implements ControllerInterface
      *     response=200,
      *     description="Updates User of given identifier and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=User::class))
      *     )
      * )
@@ -343,7 +350,7 @@ class UserController extends AbstractController implements ControllerInterface
      *     response=200,
      *     description="Updates User of given identifier and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=User::class))
      *     )
      * )*
@@ -401,10 +408,6 @@ class UserController extends AbstractController implements ControllerInterface
      * @SWG\Response(
      *     response=200,
      *     description="Delete User of given identifier and returns the empty object.",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @SWG\Items(ref=@Model(type=User::class))
-     *     )
      * )
      *
      * @param User $user

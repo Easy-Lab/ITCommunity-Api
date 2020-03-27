@@ -6,6 +6,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Contact;
 use App\Entity\Message;
+use App\Entity\Review;
 use App\Entity\User;
 use App\Service\GeolocationService;
 use App\Service\UserService;
@@ -82,6 +83,10 @@ class UserSubscriber implements EventSubscriber
 
         if ($subject instanceof Contact) {
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
+
+        if ($subject instanceof Review) {
+            $subject->setHash(sha1((string)microtime(true)));
         }
     }
 

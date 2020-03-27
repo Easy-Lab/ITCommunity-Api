@@ -64,7 +64,7 @@ class ReviewController extends AbstractController implements ControllerInterface
     /**
      * Show single Reviews.
      *
-     * @Route(path="/{review}", name="api_review_show", methods={Request::METHOD_GET})
+     * @Route(path="/{hash}", name="api_review_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="Review")
      * @SWG\Response(
@@ -117,7 +117,7 @@ class ReviewController extends AbstractController implements ControllerInterface
     {
         if (!$review) {
             $review = new Review();
-            $review->setAuthor($this->getUser());
+            $review->setUser($this->getUser());
         }
 
         $form = $this->getForm(
@@ -147,7 +147,7 @@ class ReviewController extends AbstractController implements ControllerInterface
     /**
      * Edit existing Review.
      *
-     * @Route(path="/{review}", name="api_review_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/{hash}", name="api_review_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="Review")
      * @SWG\Response(
@@ -172,16 +172,6 @@ class ReviewController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        if (($review->getAuthor() !== $this->getUser()) && ($this->getUser()->getRoles() === ['ROLE_USER'])) {
-            return $this->createNotFoundResponse();
-        }
-
-        if($this->getUser()->getRoles() === ['ROLE_USER'] || $this->getUser()->getRoles() === ['ROLE_MODERATOR']) {
-            if($review->getAuthor()->getRoles() === ['ROLE_ADMIN']) {
-                return $this->createNotFoundResponse();
-            }
-        }
-
         $form = $this->getForm(
             ReviewType::class,
             $review,
@@ -202,16 +192,12 @@ class ReviewController extends AbstractController implements ControllerInterface
     /**
      * Delete Review.
      *
-     * @Route(path="/{review}", name="api_review_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_review_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="Review")
      * @SWG\Response(
      *     response=200,
      *     description="Delete Review of given identifier and returns the empty object.",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @SWG\Items(ref=@Model(type=Review::class))
-     *     )
      * )
      *
      * @param Review|null $review
@@ -226,14 +212,8 @@ class ReviewController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        if($this->getUser()->getRoles() === ['ROLE_USER'] || $this->getUser()->getRoles() === ['ROLE_MODERATOR']) {
-            if($review->getAuthor()->getRoles() === ['ROLE_ADMIN']) {
-                return $this->createNotFoundResponse();
-            }
-        }
-
         try {
-            $review->setAuthor(null);
+            $review->setUser(null);
             $this->entityManager->remove($review);
             $this->entityManager->flush();
         } catch (\Exception $exception) {

@@ -53,7 +53,7 @@ class PointController extends AbstractController implements ControllerInterface
      *     response=200,
      *     description="Returns top 10 users.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="point",
      *         @SWG\Items(ref=@Model(type=Point::class))
      *     )

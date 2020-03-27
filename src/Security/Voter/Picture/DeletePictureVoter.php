@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Voter\Picture;
 
+use App\Entity\Picture;
 use App\Entity\Review;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -18,8 +19,8 @@ class DeletePictureVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        // you only want to vote if the attribute and subject are what you expect
-        return self::CAN_DELETE_PICTURE === $attribute && ($subject instanceof Review || null === $subject);
+        // You only want to vote if the attribute and subject are what you expect
+        return self::CAN_DELETE_PICTURE === $attribute && ($subject instanceof Picture || null === $subject);
     }
 
     /**
@@ -27,21 +28,21 @@ class DeletePictureVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        // our previous business logic indicates that admins can do it regardless
-        if (\in_array(\implode($token->getRoleNames()), ['ROLE_MODERATOR', 'ROLE_ADMIN'])) {
+        // Our previous business logic indicates that admins can do it regardless
+        if (\in_array(\implode($token->getRoleNames()), ['ROLE_ADMIN'])) {
             return true;
         }
 
-        // allow controller handle not found subject
+        // Allow controller handle not found subject
         if (null === $subject) {
             return true;
         }
 
         $user = $token->getUser();
 
-        // allow user to delete her review
-        if ($user instanceof User) {
-            return $subject->getAuthor()->getId() === $user->getId();
+        // Allow user to delete her picture
+        if ($subject instanceof Picture) {
+            return $subject->getUser()->getId() === $user->getId();
         }
 
         return false;

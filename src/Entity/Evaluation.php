@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Traits\IdColumnTrait;
-use App\Traits\TimeAwareTrait;
+use App\Traits\TimeAwareTraitPublic;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,14 +17,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Evaluation
 {
     use IdColumnTrait;
-    use TimeAwareTrait;
+    use TimeAwareTraitPublic;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="evaluations")
      * @ORM\JoinColumn(nullable=false)
      *
      * @Assert\NotBlank
-     *
      */
     private $user;
 
@@ -35,6 +34,7 @@ class Evaluation
      * @Assert\NotBlank
      *
      * @JMS\Expose
+     * @JMS\Groups("contact")
      */
     private $contact;
 
@@ -45,6 +45,7 @@ class Evaluation
      * @Assert\NotBlank
      *
      * @JMS\Expose
+     * @JMS\Groups("message")
      */
     private $message;
 

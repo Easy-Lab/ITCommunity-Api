@@ -70,7 +70,7 @@ class PictureController extends AbstractController implements ControllerInterfac
      *     response=200,
      *     description="Returns picture of given identifier.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="picture",
      *         @SWG\Items(ref=@Model(type=Picture::class))
      *     )
@@ -99,7 +99,7 @@ class PictureController extends AbstractController implements ControllerInterfac
      *     response=200,
      *     description="Updates Picture of given identifier and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Picture::class))
      *     )
      * )
@@ -145,7 +145,7 @@ class PictureController extends AbstractController implements ControllerInterfac
      *     response=200,
      *     description="Updates Picture of given identifier and returns the updated object.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         @SWG\Items(ref=@Model(type=Picture::class))
      *     )
      * )
@@ -198,11 +198,7 @@ class PictureController extends AbstractController implements ControllerInterfac
      * @SWG\Tag(name="Picture")
      * @SWG\Response(
      *     response=200,
-     *     description="Delete Picture of given identifier and returns the empty object.",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @SWG\Items(ref=@Model(type=Picture::class))
-     *     )
+     *     description="Delete Picture of given identifier and returns the empty object."
      * )
      *
      * @param Picture|null $picture
