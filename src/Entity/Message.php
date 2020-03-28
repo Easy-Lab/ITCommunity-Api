@@ -33,11 +33,11 @@ class Message
     private $contact;
 
     /**
-     * @ORM\Column(type="boolean", options={"default":false})
+     * @ORM\Column(type="boolean")
      *
      * @JMS\Expose
      */
-    private $type;
+    private $type = 0;
 
     /**
      * @ORM\Column(type="string", length=255)

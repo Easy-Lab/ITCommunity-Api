@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Entity\BugReport;
 use App\Entity\Contact;
 use App\Entity\Message;
 use App\Entity\Review;
@@ -88,6 +89,11 @@ class UserSubscriber implements EventSubscriber
         if ($subject instanceof Review) {
             $subject->setHash(sha1((string)microtime(true)));
         }
+
+        if ($subject instanceof BugReport) {
+            $subject->setHash(sha1((string)microtime(true)));
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
     }
 
     /**
@@ -111,6 +117,11 @@ class UserSubscriber implements EventSubscriber
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
+
+        if ($subject instanceof BugReport) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
+        }
     }
 
     /**
@@ -129,6 +140,10 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof Contact) {
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
+
+        if ($subject instanceof BugReport) {
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
         }
     }
@@ -151,6 +166,11 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof Contact) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
+        }
+
+        if ($subject instanceof BugReport) {
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
@@ -193,6 +213,11 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof Contact) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
+        }
+
+        if ($subject instanceof BugReport) {
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
