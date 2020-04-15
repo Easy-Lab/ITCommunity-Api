@@ -7,6 +7,7 @@ namespace App\EventSubscriber;
 use App\Entity\BugReport;
 use App\Entity\Contact;
 use App\Entity\Message;
+use App\Entity\Picture;
 use App\Entity\Review;
 use App\Entity\User;
 use App\Service\GeolocationService;
@@ -93,6 +94,10 @@ class UserSubscriber implements EventSubscriber
         if ($subject instanceof BugReport) {
             $subject->setHash(sha1((string)microtime(true)));
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
+
+        if ($subject instanceof Picture) {
+            $subject->setHash(sha1((string)microtime(true)));
         }
     }
 
