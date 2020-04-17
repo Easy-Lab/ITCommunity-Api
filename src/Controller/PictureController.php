@@ -63,12 +63,12 @@ class PictureController extends AbstractController implements ControllerInterfac
     /**
      * Show single picture.
      *
-     * @Route(path="/{picture}", name="api_picture_show", methods={Request::METHOD_GET})
+     * @Route(path="/{hash}", name="api_picture_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="Picture")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns picture of given identifier.",
+     *     description="Returns picture of given hash.",
      *     @SWG\Schema(
      *         type="array",
      *         title="picture",
@@ -193,12 +193,12 @@ class PictureController extends AbstractController implements ControllerInterfac
     /**
      * Delete Picture.
      *
-     * @Route(path="/{picture}", name="api_picture_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_picture_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="Picture")
      * @SWG\Response(
      *     response=200,
-     *     description="Delete Picture of given identifier and returns the empty object."
+     *     description="Delete Picture of given hash and returns the empty object."
      * )
      *
      * @param Picture|null $picture
