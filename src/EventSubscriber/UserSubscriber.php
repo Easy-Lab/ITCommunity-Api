@@ -6,6 +6,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\BugReport;
 use App\Entity\Contact;
+use App\Entity\ContactForm;
 use App\Entity\Message;
 use App\Entity\Picture;
 use App\Entity\Review;
@@ -99,6 +100,11 @@ class UserSubscriber implements EventSubscriber
         if ($subject instanceof Picture) {
             $subject->setHash(sha1((string)microtime(true)));
         }
+
+        if ($subject instanceof ContactForm) {
+            $subject->setHash(sha1((string)microtime(true)));
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
     }
 
     /**
@@ -127,6 +133,11 @@ class UserSubscriber implements EventSubscriber
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
+
+        if ($subject instanceof ContactForm) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
+        }
     }
 
     /**
@@ -149,6 +160,10 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof BugReport) {
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
+
+        if ($subject instanceof ContactForm) {
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
         }
     }
@@ -176,6 +191,11 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof BugReport) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
+        }
+
+        if ($subject instanceof ContactForm) {
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
@@ -223,6 +243,11 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof BugReport) {
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
+        }
+
+        if ($subject instanceof ContactForm) {
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
