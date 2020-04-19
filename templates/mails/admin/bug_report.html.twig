@@ -1,0 +1,10 @@
+{% extends 'mails/layout.html.twig' %}
+
+{% block body %}
+	<p>Prénom : {{ contactForm.firstname }}</p>
+	<p>Nom : {{ contactForm.lastname|capitalize }}</p>
+    <p>E-mail : {{ contactForm.email }}</p>
+	<p>Téléphone : {{ contactForm.phone }}</p>
+	<p>Message : {{ contactForm.body }}</p>
+	<p>Raison : {{ contactForm.subject }}</p>
+{% endblock %}

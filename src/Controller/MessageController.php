@@ -14,6 +14,7 @@ use App\Form\MessageType;
 use App\Interfaces\ControllerInterface;
 use App\Service\Manager\UserManager;
 use App\Service\Manager\ContactManager;
+use App\Utils\Mailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
@@ -40,15 +41,21 @@ class MessageController extends AbstractController implements ControllerInterfac
     private $contactManager;
 
     /**
+     * @var Mailer
+     */
+    private $mailer;
+
+    /**
      * MessageController constructor.
      * @param UserManager $userManager
      * @param ContactManager $contactManager
      */
-    public function __construct(UserManager $userManager, ContactManager $contactManager)
+    public function __construct(UserManager $userManager, ContactManager $contactManager, Mailer $mailer)
     {
         parent::__construct(Message::class);
         $this->userManager = $userManager;
         $this->contactManager = $contactManager;
+        $this->mailer=$mailer;
     }
 
     /**
@@ -162,6 +169,13 @@ class MessageController extends AbstractController implements ControllerInterfac
             $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($message->getType() == 1)
+        {
+            $this->mailer->sendPrivateMessageMail($message, $message->getUser());
+        }else{
+            $this->mailer->sendPublicMessageMail($message, $message->getUser());
         }
 
         return $this->createResourceResponse($message, Response::HTTP_CREATED);

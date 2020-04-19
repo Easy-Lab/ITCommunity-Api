@@ -9,6 +9,7 @@ use App\Form\BugReportStatusType;
 use App\Form\BugReportType;
 use App\Form\Filter\BugReportFilter;
 use App\Interfaces\ControllerInterface;
+use App\Utils\Mailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
@@ -23,12 +24,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
  */
 class BugReportController extends AbstractController implements ControllerInterface
 {
+    public $mailer;
      /**
      * MessageController constructor.
      */
-    public function __construct()
+    public function __construct(Mailer $mailer)
     {
         parent::__construct(BugReport::class);
+        $this->mailer=$mailer;
     }
 
     /**
@@ -126,7 +129,7 @@ class BugReportController extends AbstractController implements ControllerInterf
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
-
+        $this->mailer->sendContactFormMail($bugReport);
         return $this->createResourceResponse($bugReport, Response::HTTP_CREATED);
     }
 

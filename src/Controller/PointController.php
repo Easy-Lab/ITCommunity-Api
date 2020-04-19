@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Entity\Point;
+use App\Form\PointType;
 use App\Interfaces\ControllerInterface;
 use App\Service\Manager\PointManager;
 use App\Service\Manager\UserManager;
