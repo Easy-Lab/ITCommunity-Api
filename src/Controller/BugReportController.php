@@ -1,16 +1,13 @@
 <?php
-
-
 namespace App\Controller;
 
 use App\Entity\BugReport;
 use App\Exception\ApiException;
-use App\Form\BugReportStatusType;
 use App\Form\BugReportType;
 use App\Form\Filter\BugReportFilter;
+use App\Form\Handler\BugReportStatusType;
 use App\Interfaces\ControllerInterface;
 use App\Utils\Mailer;
-use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
