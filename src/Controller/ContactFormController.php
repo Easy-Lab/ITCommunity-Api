@@ -8,6 +8,7 @@ use App\Exception\ApiException;
 use App\Form\ContactFormType;
 use App\Form\Filter\ContactFormFilter;
 use App\Interfaces\ControllerInterface;
+use App\Utils\Mailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
@@ -22,12 +23,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
  */
 class ContactFormController extends AbstractController implements ControllerInterface
 {
+    public $mailer;
     /**
      * ContactForm constructor.
      */
-    public function __construct()
+
+    public function __construct(Mailer $mailer)
     {
         parent::__construct(ContactForm::class);
+        $this->mailer=$mailer;
     }
 
     /**
@@ -125,7 +129,7 @@ class ContactFormController extends AbstractController implements ControllerInte
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
-
+        $this->mailer->sendContactFormMail($contactForm);
         return $this->createResourceResponse($contactForm, Response::HTTP_CREATED);
     }
 

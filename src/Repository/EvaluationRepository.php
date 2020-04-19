@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Contact;
 use App\Entity\Evaluation;
+use App\Entity\User;
 use App\Interfaces\RepositoryInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,5 +19,17 @@ class EvaluationRepository extends AbstractRepository implements RepositoryInter
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Evaluation::class);
+    }
+
+    public function findEvaluationExist(User $user, Contact $contact)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.user = :user')
+            ->andWhere('e.contact = :contact')
+            ->setParameter('user',$user)
+            ->setParameter('contact',$contact)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult();
     }
 }
