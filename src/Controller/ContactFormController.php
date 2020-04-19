@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -9,7 +10,6 @@ use App\Form\ContactFormType;
 use App\Form\Filter\ContactFormFilter;
 use App\Interfaces\ControllerInterface;
 use App\Utils\Mailer;
-use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
