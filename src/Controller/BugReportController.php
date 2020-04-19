@@ -129,7 +129,7 @@ class BugReportController extends AbstractController implements ControllerInterf
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
-        $this->mailer->sendContactFormMail($bugReport);
+        $this->mailer->sendReportFormMail($bugReport);
         return $this->createResourceResponse($bugReport, Response::HTTP_CREATED);
     }
 
