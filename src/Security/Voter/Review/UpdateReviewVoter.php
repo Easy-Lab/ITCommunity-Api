@@ -28,7 +28,7 @@ class UpdateReviewVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         // Our previous business logic indicates that mods and admins can do it regardless
-        if (\in_array(\implode($token->getRoleNames()), ['ROLE_MODERATOR', 'ROLE_ADMIN'])) {
+        if (\in_array(\implode($token->getRoleNames()), ['ROLE_MODERATOR', 'ROLE_ADMIN','ROLE_USER'])) {
             return true;
         }
 
@@ -40,8 +40,8 @@ class UpdateReviewVoter extends Voter
         $user = $token->getUser();
 
         // Allow user to update her review
-        if ($subject instanceof Review) {
-            return $subject->getUser()->getId() === $user->getId();
+        if ($user instanceof User) {
+            return $user;
         }
 
         return false;
