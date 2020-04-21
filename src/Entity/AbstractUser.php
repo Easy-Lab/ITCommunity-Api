@@ -24,17 +24,12 @@ abstract class AbstractUser implements UserInterface, \Serializable
     use TimeAwareTrait;
 
     /**
-     * @SWG\Property(
-     *     type="string",
-     *     @SWG\Items(type="string")
-     * )
-     *
      * @ORM\Column(type="string")
      *
      * @Assert\NotBlank
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('CAN_SHOW_ACCOUNT_USER', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $firstname;
@@ -45,18 +40,13 @@ abstract class AbstractUser implements UserInterface, \Serializable
      * @Assert\NotBlank
      *
      * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('CAN_SHOW_ACCOUNT_USER', object)"
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
     protected $lastname;
 
 
     /**
-     * @SWG\Property(
-     *     type="string",
-     *     @SWG\Items(type="string")
-     * )
-     *
      * @ORM\Column(type="string", unique=true)
      *
      * @JMS\Expose
@@ -64,8 +54,6 @@ abstract class AbstractUser implements UserInterface, \Serializable
     protected $username;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string", unique=true)
      *
      * @Assert\Email
@@ -84,14 +72,11 @@ abstract class AbstractUser implements UserInterface, \Serializable
     protected $plainPassword;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string")
      */
     protected $password;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose(
@@ -111,11 +96,6 @@ abstract class AbstractUser implements UserInterface, \Serializable
     protected $address2;
 
     /**
-     * @SWG\Property(
-     *     type="string",
-     *     @SWG\Items(type="string")
-     * )
-     *
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose
@@ -123,11 +103,6 @@ abstract class AbstractUser implements UserInterface, \Serializable
     protected $zipcode;
 
     /**
-     * @SWG\Property(
-     *     type="string",
-     *     @SWG\Items(type="string")
-     * )
-     *
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose
@@ -168,7 +143,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
      */
-    protected $isBanned = false;
+    protected $isBanned;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -202,7 +177,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      *
      * @JMS\Expose
      */
-    protected $step = 1;
+    protected $step;
 
     /**
      * @ORM\Column(type="float", nullable=true)

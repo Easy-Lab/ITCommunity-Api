@@ -12,6 +12,7 @@ App\Entity\User:
     city: <city()>
     phone: <phoneNumber()>
     informations_enabled: <boolean()>
+    is_banned: <boolean()>
     step: 3
 
   user_{1..7}:
@@ -27,4 +28,5 @@ App\Entity\User:
     city: <city()>
     phone: <phoneNumber()>
     informations_enabled: <boolean()>
+    is_banned: <boolean()>
     step: 3

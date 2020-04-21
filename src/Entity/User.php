@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @JMS\ExclusionPolicy("ALL")
  */
-class User extends AbstractUser implements UserInterface
+class User extends AbstractUser
 {
 
     /**

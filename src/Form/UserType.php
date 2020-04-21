@@ -33,6 +33,7 @@ class UserType extends AbstractType
             ->add('phone')
             ->add('step')
             ->add('informationsEnabled')
+            ->add('isBanned')
             ->add('ip')
             ->add('latitude')
             ->add('longitude')

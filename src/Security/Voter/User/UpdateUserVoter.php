@@ -40,6 +40,10 @@ class UpdateUserVoter extends Voter
 
         $user = $token->getUser();
 
+        if ($user === "anon.") {
+            return false;
+        }
+
         // Allow user to update account
         if ($user instanceof User) {
             return $user;
