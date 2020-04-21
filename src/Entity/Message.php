@@ -37,7 +37,7 @@ class Message
      *
      * @JMS\Expose
      */
-    private $type = 0;
+    private $type;
 
     /**
      * @ORM\Column(type="string", length=255)

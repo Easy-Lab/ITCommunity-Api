@@ -74,7 +74,13 @@ class UserSubscriber implements EventSubscriber
             $this->encodePassword($subject);
             $subject->setHash(sha1((string)microtime(true)));
             $subject->setTosAcceptedAt(new \DateTime());
-            $this->encryptFields($subject);
+            $this->userService->setCrypted($subject, 'firstname', $subject->getFirstname());
+            $this->userService->setCrypted($subject, 'lastname', $subject->getLastname());
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+            $this->userService->setCrypted($subject, 'address', $subject->getAddress());
+            if ($subject->getAddress2()) {
+                $this->userService->setCrypted($subject, 'address2', $subject->getAddress2());
+            }
             $this->userService->setCrypted($subject, 'zipcode', $subject->getZipcode());
             $this->userService->setCrypted($subject, 'city', $subject->getCity());
             $this->userService->setCrypted($subject, 'phone', $subject->getPhone());
@@ -115,10 +121,23 @@ class UserSubscriber implements EventSubscriber
         $subject = $args->getEntity();
 
         if ($subject instanceof User) {
-            $this->decryptFields($subject);
+            $firstname = $this->userService->getUncrypted($subject, 'firstname');
+            $lastname = $this->userService->getUncrypted($subject, 'lastname');
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $address = $this->userService->getUncrypted($subject, 'address');
+            if ($subject->getAddress2()) {
+                $address2 = $this->userService->getUncrypted($subject, 'address2');
+            }
             $zipcode = $this->userService->getUncrypted($subject, 'zipcode');
             $city = $this->userService->getUncrypted($subject, 'city');
             $phone = $this->userService->getUncrypted($subject, 'phone');
+            $subject->setFirstname($firstname);
+            $subject->setLastname($lastname);
+            $subject->setEmail($email);
+            $subject->setAddress($address);
+            if ($subject->getAddress2()) {
+                $subject->setAddress2($address2);
+            }
             $subject->setZipcode($zipcode);
             $subject->setCity($city);
             $subject->setPhone($phone);
@@ -149,7 +168,13 @@ class UserSubscriber implements EventSubscriber
         $subject = $args->getEntity();
 
         if ($subject instanceof User) {
-            $this->encryptFields($subject);
+            $this->userService->setCrypted($subject, 'firstname', $subject->getFirstname());
+            $this->userService->setCrypted($subject, 'lastname', $subject->getLastname());
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+            $this->userService->setCrypted($subject, 'address', $subject->getAddress());
+            if ($subject->getAddress2()) {
+                $this->userService->setCrypted($subject, 'address2', $subject->getAddress2());
+            }
             $this->userService->setCrypted($subject, 'zipcode', $subject->getZipcode());
             $this->userService->setCrypted($subject, 'city', $subject->getCity());
             $this->userService->setCrypted($subject, 'phone', $subject->getPhone());
@@ -176,10 +201,23 @@ class UserSubscriber implements EventSubscriber
         $subject = $args->getEntity();
 
         if ($subject instanceof User) {
-            $this->decryptFields($subject);
+            $firstname = $this->userService->getUncrypted($subject, 'firstname');
+            $lastname = $this->userService->getUncrypted($subject, 'lastname');
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $address = $this->userService->getUncrypted($subject, 'address');
+            if ($subject->getAddress2()) {
+                $address2 = $this->userService->getUncrypted($subject, 'address2');
+            }
             $zipcode = $this->userService->getUncrypted($subject, 'zipcode');
             $city = $this->userService->getUncrypted($subject, 'city');
             $phone = $this->userService->getUncrypted($subject, 'phone');
+            $subject->setFirstname($firstname);
+            $subject->setLastname($lastname);
+            $subject->setEmail($email);
+            $subject->setAddress($address);
+            if ($subject->getAddress2()) {
+                $subject->setAddress2($address2);
+            }
             $subject->setZipcode($zipcode);
             $subject->setCity($city);
             $subject->setPhone($phone);
@@ -228,10 +266,23 @@ class UserSubscriber implements EventSubscriber
         $subject = $args->getEntity();
 
         if ($subject instanceof User) {
-            $this->decryptFields($subject);
+            $firstname = $this->userService->getUncrypted($subject, 'firstname');
+            $lastname = $this->userService->getUncrypted($subject, 'lastname');
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $address = $this->userService->getUncrypted($subject, 'address');
+            if ($subject->getAddress2()) {
+                $address2 = $this->userService->getUncrypted($subject, 'address2');
+            }
             $zipcode = $this->userService->getUncrypted($subject, 'zipcode');
             $city = $this->userService->getUncrypted($subject, 'city');
             $phone = $this->userService->getUncrypted($subject, 'phone');
+            $subject->setFirstname($firstname);
+            $subject->setLastname($lastname);
+            $subject->setEmail($email);
+            $subject->setAddress($address);
+            if ($subject->getAddress2()) {
+                $subject->setAddress2($address2);
+            }
             $subject->setZipcode($zipcode);
             $subject->setCity($city);
             $subject->setPhone($phone);
@@ -262,46 +313,4 @@ class UserSubscriber implements EventSubscriber
 
         $user->setPassword($encoded);
     }
-
-    private function encryptFields(User $user)
-    {
-        // Set the entity variables
-        try {
-            $this->userService->setCrypted($user, 'firstname', $user->getFirstname());
-            $this->userService->setCrypted($user, 'lastname', $user->getLastname());
-            $this->userService->setCrypted($user, 'email', $user->getEmail());
-            $this->userService->setCrypted($user, 'address', $user->getAddress());
-            if ($user->getAddress2()) {
-                $this->userService->setCrypted($user, 'address2', $user->getAddress2());
-            }
-        } catch (Exception $e) {
-            return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
-        }
-        return new JsonResponse('Decode successful.', Response::HTTP_OK);
-    }
-
-    private function decryptFields(User $user)
-    {
-        // Decrypt the variables
-        $firstname = $this->userService->getUncrypted($user, 'firstname');
-        $lastname = $this->userService->getUncrypted($user, 'lastname');
-        $email = $this->userService->getUncrypted($user, 'email');
-        $address = $this->userService->getUncrypted($user, 'address');
-        if ($user->getAddress2()) {
-            $address2 = $this->userService->getUncrypted($user, 'address2');
-        }
-
-        // Set the entity variables
-        try {
-            $user->setFirstname($firstname);
-            $user->setLastname($lastname);
-            $user->setEmail($email);
-            $user->setAddress($address);
-            $user->setAddress2($address2);
-        } catch (Exception $e) {
-            return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
-        }
-        return new JsonResponse('Decode successful.', Response::HTTP_OK);
-    }
-
 }

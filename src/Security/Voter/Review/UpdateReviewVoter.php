@@ -39,6 +39,10 @@ class UpdateReviewVoter extends Voter
 
         $user = $token->getUser();
 
+        if ($user === "anon.") {
+            return false;
+        }
+
         // Allow user to update her review
         if ($subject instanceof Review) {
             return $subject->getUser()->getId() === $user->getId();

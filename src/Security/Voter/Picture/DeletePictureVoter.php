@@ -40,6 +40,10 @@ class DeletePictureVoter extends Voter
 
         $user = $token->getUser();
 
+        if ($user === "anon.") {
+            return false;
+        }
+
         // Allow user to delete her picture
         if ($subject instanceof Picture) {
             return $subject->getUser()->getId() === $user->getId();

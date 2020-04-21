@@ -333,6 +333,7 @@ class UserController extends AbstractController implements ControllerInterface
 
         try {
             $this->formHandler->process($request, $form);
+
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }

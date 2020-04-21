@@ -39,6 +39,10 @@ class DeleteReviewVoter extends Voter
 
         $user = $token->getUser();
 
+        if ($user === "anon.") {
+            return false;
+        }
+
         // Allow user to delete her review
         if ($subject instanceof Review) {
             return $subject->getUser()->getId() === $user->getId();
