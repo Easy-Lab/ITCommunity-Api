@@ -13,6 +13,7 @@ use App\Exception\ApiException;
 use App\Form\Filter\UserFilter;
 use App\Form\UserType;
 use App\Interfaces\ControllerInterface;
+use App\Service\GeolocationService;
 use App\Service\Manager\PointManager;
 use App\Service\Manager\UserManager;
 use App\Service\UserService;
@@ -45,15 +46,22 @@ class UserController extends AbstractController implements ControllerInterface
     protected $userService;
 
     /**
+     * @var GeolocationService
+     */
+    protected $geolocationService;
+
+    /**
      * UserController constructor.
      * @param UserManager $userManager
      * @param PointManager $pointManager
      * @param UserService $userService
+     * @param GeolocationService $geolocationService
      */
     public function __construct(
         UserManager $userManager,
         PointManager $pointManager,
-        UserService $userService
+        UserService $userService,
+        GeolocationService $geolocationService
     )
     {
         parent::__construct(User::class);
@@ -61,6 +69,7 @@ class UserController extends AbstractController implements ControllerInterface
         $this->userManager = $userManager;
         $this->pointManager = $pointManager;
         $this->userService = $userService;
+        $this->geolocationService = $geolocationService;
     }
 
     /**
@@ -333,7 +342,7 @@ class UserController extends AbstractController implements ControllerInterface
 
         try {
             $this->formHandler->process($request, $form);
-
+            $this->geolocationService->retrieveGeocode($user);
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }

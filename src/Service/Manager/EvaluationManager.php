@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Service\Manager;
 
 use App\Controller\AbstractController;
+use App\Entity\Contact;
 use App\Entity\Evaluation;
+use App\Entity\User;
 use App\Repository\EvaluationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -80,5 +82,10 @@ class EvaluationManager
     public function findEvaluations()
     {
         return $this->repository->findAll();
+    }
+
+    public function findEvaluationExist(User $user, Contact $contact)
+    {
+        return $this->repository->findEvaluationExist($user,$contact);
     }
 }

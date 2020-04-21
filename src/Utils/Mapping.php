@@ -25,7 +25,7 @@ class Mapping
         $address = trim(preg_replace('/\s+/', ' ', $address));
         if (empty($address)) return [null, null];
 
-        $apiKey = getenv('GOOGLE_GEOCODING_API_KEY');
+        $apiKey = getenv("GOOGLE_GEOCODING_API_KEY");
         $queryParameters = [
             'address' => $address,
             'key' => $apiKey

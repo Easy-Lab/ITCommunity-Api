@@ -39,6 +39,8 @@ class GeolocationService
 
             $user->setLatitude($latitude + $randomLatOffset);
             $user->setLongitude($longitude + $randomLngOffset);
+            $this->em->persist($user);
+            $this->em->flush();
 
             //$mailService->sendRegisterDoneMail($user);
             $return = true;
