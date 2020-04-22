@@ -222,6 +222,9 @@ class MessageController extends AbstractController implements ControllerInterfac
         } catch (ApiException $e) {
             return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
+        if ($message->getAnswer()){
+            $this->mailer->sendAnswerMessageMail($message, $message->getContact());
+        }
 
         return $this->createResourceResponse($message);
     }
