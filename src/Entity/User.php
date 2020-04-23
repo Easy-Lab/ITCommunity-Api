@@ -76,6 +76,11 @@ class User extends AbstractUser
     private $pictures;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Affiliate", mappedBy="user")
+     */
+    private $affiliates;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -87,6 +92,7 @@ class User extends AbstractUser
         $this->publicChats = new ArrayCollection();
         $this->privateChats = new ArrayCollection();
         $this->pictures = new ArrayCollection();
+        $this->affiliates = new ArrayCollection();
     }
 
     /**
@@ -310,6 +316,37 @@ class User extends AbstractUser
             // set the owning side to null (unless already changed)
             if ($picture->getUser() === $this) {
                 $picture->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Affiliate[]
+     */
+    public function getAffiliates(): Collection
+    {
+        return $this->affiliates;
+    }
+
+    public function addAffiliate(Affiliate $affiliate): self
+    {
+        if (!$this->affiliates->contains($affiliate)) {
+            $this->affiliates[] = $affiliate;
+            $affiliate->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffiliate(Affiliate $affiliate): self
+    {
+        if ($this->affiliates->contains($affiliate)) {
+            $this->affiliates->removeElement($affiliate);
+            // set the owning side to null (unless already changed)
+            if ($affiliate->getUser() === $this) {
+                $affiliate->setUser(null);
             }
         }
 

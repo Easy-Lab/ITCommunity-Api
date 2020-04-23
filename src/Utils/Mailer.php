@@ -4,6 +4,7 @@
 namespace App\Utils;
 
 
+use App\Entity\Affiliate;
 use App\Entity\BugReport;
 use App\Entity\Contact;
 use App\Entity\ContactForm;
@@ -39,12 +40,13 @@ class Mailer
             ]);
     }
 
-    public function sendInvitationMail(Message $message)
+    public function sendInvitationMail(Affiliate $affiliate)
     {
-        return $this->send('contact.invitation', $message->getContact()->getEmail(), [
-            'user' => $message->getUser(),
-            'contact' => $message->getContact(),
-            'hash'=>$message->getHash(),
+        return $this->send('contact.invitation', $affiliate->getEmail(), [
+            'user' => $affiliate->getUser(),
+            'firstname' => $affiliate->getFirstname(),
+            'lastname' => $affiliate->getLastname(),
+            'hash'=>$affiliate->getHash(),
             'urlFront'=>getenv('URL_FRONT').'/user/log',
             'login'=>getenv('URL_FRONT').'/se-connecter'
         ]);

@@ -24,9 +24,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
  */
 class BugReportController extends AbstractController implements ControllerInterface
 {
-    public $mailer;
-     /**
+    private $mailer;
+
+    /**
      * MessageController constructor.
+     * @param Mailer $mailer
      */
     public function __construct(Mailer $mailer)
     {

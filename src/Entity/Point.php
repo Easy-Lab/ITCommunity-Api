@@ -71,6 +71,11 @@ class Point
      */
     private $review;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Affiliate", inversedBy="points")
+     */
+    private $affiliate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -144,6 +149,18 @@ class Point
     public function setReview(?Review $review): self
     {
         $this->review = $review;
+
+        return $this;
+    }
+
+    public function getAffiliate(): ?Affiliate
+    {
+        return $this->affiliate;
+    }
+
+    public function setAffiliate(?Affiliate $affiliate): self
+    {
+        $this->affiliate = $affiliate;
 
         return $this;
     }

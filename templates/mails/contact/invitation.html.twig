@@ -1,7 +1,7 @@
 {% extends 'mails/layoutContact.html.twig' %}
 
 {% block body %}
-	<p>{{ ('mail.common.hello')|trans }}&nbsp;{{contact.firstname}}</p>
+	<p>{{ ('mail.common.hello')|trans }}&nbsp;{{firstname}}</p>
 	<p>{{user.firstname}} {{ user.lastname }} {{ ('mail.contact.discover.title')|trans }}</p>
 	<p>{{ ('mail.contact.discover.content')|trans }}</p>
 	<ul>

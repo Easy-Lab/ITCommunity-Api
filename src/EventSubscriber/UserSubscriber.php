@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Entity\Affiliate;
 use App\Entity\BugReport;
 use App\Entity\Contact;
 use App\Entity\ContactForm;
@@ -111,10 +112,18 @@ class UserSubscriber implements EventSubscriber
             $subject->setHash(sha1((string)microtime(true)));
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
         }
+
+        if ($subject instanceof Affiliate) {
+            $subject->setHash(sha1((string)microtime(true)));
+            $this->userService->setCrypted($subject, 'firstname', $subject->getFirstname());
+            $this->userService->setCrypted($subject, 'lastname', $subject->getLastname());
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
     }
 
     /**
      * @param LifecycleEventArgs $args
+     * @throws Exception
      */
     public function postPersist(LifecycleEventArgs $args)
     {
@@ -157,6 +166,15 @@ class UserSubscriber implements EventSubscriber
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
+
+        if ($subject instanceof Affiliate) {
+            $firstname = $this->userService->getUncrypted($subject, 'firstname');
+            $lastname = $this->userService->getUncrypted($subject, 'lastname');
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setFirstname($firstname);
+            $subject->setLastname($lastname);
+            $subject->setEmail($email);
+        }
     }
 
     /**
@@ -191,10 +209,18 @@ class UserSubscriber implements EventSubscriber
         if ($subject instanceof ContactForm) {
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
         }
+
+        if ($subject instanceof Affiliate) {
+            $subject->setHash(sha1((string)microtime(true)));
+            $this->userService->setCrypted($subject, 'firstname', $subject->getFirstname());
+            $this->userService->setCrypted($subject, 'lastname', $subject->getLastname());
+            $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+        }
     }
 
     /**
      * @param LifecycleEventArgs $args
+     * @throws Exception
      */
     public function postUpdate(LifecycleEventArgs $args): void
     {
@@ -237,6 +263,15 @@ class UserSubscriber implements EventSubscriber
             $email = $this->userService->getUncrypted($subject, 'email');
             $subject->setEmail($email);
         }
+
+        if ($subject instanceof Affiliate) {
+            $firstname = $this->userService->getUncrypted($subject, 'firstname');
+            $lastname = $this->userService->getUncrypted($subject, 'lastname');
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setFirstname($firstname);
+            $subject->setLastname($lastname);
+            $subject->setEmail($email);
+        }
     }
 
     /**
@@ -260,6 +295,7 @@ class UserSubscriber implements EventSubscriber
 
     /**
      * @param LifecycleEventArgs $args
+     * @throws Exception
      */
     public function postLoad(LifecycleEventArgs $args)
     {
@@ -300,6 +336,15 @@ class UserSubscriber implements EventSubscriber
 
         if ($subject instanceof ContactForm) {
             $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setEmail($email);
+        }
+
+        if ($subject instanceof Affiliate) {
+            $firstname = $this->userService->getUncrypted($subject, 'firstname');
+            $lastname = $this->userService->getUncrypted($subject, 'lastname');
+            $email = $this->userService->getUncrypted($subject, 'email');
+            $subject->setFirstname($firstname);
+            $subject->setLastname($lastname);
             $subject->setEmail($email);
         }
     }

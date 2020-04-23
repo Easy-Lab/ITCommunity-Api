@@ -14,6 +14,7 @@ use App\Form\Filter\UserFilter;
 use App\Form\UserType;
 use App\Interfaces\ControllerInterface;
 use App\Service\GeolocationService;
+use App\Service\Manager\AffiliateManager;
 use App\Service\Manager\PointManager;
 use App\Service\Manager\UserManager;
 use App\Service\UserService;
@@ -36,6 +37,11 @@ class UserController extends AbstractController implements ControllerInterface
     private $userManager;
 
     /**
+     * @var AffiliateManager
+     */
+    private $affiliateManager;
+
+    /**
      * @var PointManager
      */
     private $pointManager;
@@ -53,12 +59,14 @@ class UserController extends AbstractController implements ControllerInterface
     /**
      * UserController constructor.
      * @param UserManager $userManager
+     * @param AffiliateManager $affiliateManager
      * @param PointManager $pointManager
      * @param UserService $userService
      * @param GeolocationService $geolocationService
      */
     public function __construct(
         UserManager $userManager,
+        AffiliateManager $affiliateManager,
         PointManager $pointManager,
         UserService $userService,
         GeolocationService $geolocationService
@@ -67,6 +75,7 @@ class UserController extends AbstractController implements ControllerInterface
         parent::__construct(User::class);
 
         $this->userManager = $userManager;
+        $this->affiliateManager = $affiliateManager;
         $this->pointManager = $pointManager;
         $this->userService = $userService;
         $this->geolocationService = $geolocationService;
@@ -322,10 +331,22 @@ class UserController extends AbstractController implements ControllerInterface
         $data = \json_decode($request->getContent(), true);
         $userEmailExist = $this->userManager->findUserByEmail($data['email']);
         $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
-
+        $userAffiliateExist = $this->affiliateManager->findAffiliateByEmail($data['email']);
 
         if ($userEmailExist or $userUsernameExist) {
             return $this->createAlredyExistResponse();
+        }
+
+        if ($userAffiliateExist) {
+            $userAffiliateExist->setStatus(true);
+            $userAffiliate = $userAffiliateExist->getUser();
+            $point = new Point();
+            $point->setUser($userAffiliate);
+            $point->setAffiliate($userAffiliateExist);
+            $point->setAmount(50);
+            $point->setType('Affiliate');
+            $this->entityManager->persist($point);
+            $this->entityManager->flush();
         }
 
         if (!$user) {
@@ -343,6 +364,13 @@ class UserController extends AbstractController implements ControllerInterface
         try {
             $this->formHandler->process($request, $form);
             $this->geolocationService->retrieveGeocode($user);
+            $point = new Point();
+            $point->setUser($user);
+            $point->setAffiliate($userAffiliateExist);
+            $point->setAmount(15);
+            $point->setType('Accepte Affiliate');
+            $this->entityManager->persist($point);
+            $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
