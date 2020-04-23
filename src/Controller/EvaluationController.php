@@ -13,6 +13,7 @@ use App\Service\Manager\ContactManager;
 use App\Service\Manager\EvaluationManager;
 use App\Service\Manager\MessageManager;
 use App\Service\Manager\UserManager;
+use App\Utils\Mailer;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -47,19 +48,27 @@ class EvaluationController extends AbstractController implements ControllerInter
     private $messageManager;
 
     /**
+     * @var Mailer
+     */
+    private $mailer;
+
+
+    /**
      * ContactController constructor.
      * @param UserManager $userManager
      * @param ContactManager $contactManager
      * @param MessageManager $messageManager
      * @param EvaluationManager $evaluationManager
+     * @param Mailer $mailer
      */
-    public function __construct(UserManager $userManager, ContactManager $contactManager, MessageManager $messageManager, EvaluationManager $evaluationManager)
+    public function __construct(UserManager $userManager, ContactManager $contactManager, MessageManager $messageManager, EvaluationManager $evaluationManager, Mailer $mailer)
     {
         parent::__construct(Evaluation::class);
         $this->userManager = $userManager;
         $this->contactManager = $contactManager;
         $this->messageManager = $messageManager;
         $this->evaluationManager = $evaluationManager;
+        $this->mailer = $mailer;
     }
 
     /**
@@ -182,7 +191,7 @@ class EvaluationController extends AbstractController implements ControllerInter
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
-
+        $this->mailer->sendNewEvaluationMail($evaluation, $evaluation->getUser());
         return $this->createResourceResponse($evaluation, Response::HTTP_CREATED);
     }
 
