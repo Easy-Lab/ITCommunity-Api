@@ -7,6 +7,7 @@ namespace App\Utils;
 use App\Entity\BugReport;
 use App\Entity\Contact;
 use App\Entity\ContactForm;
+use App\Entity\Evaluation;
 use App\Entity\Message;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
@@ -34,8 +35,8 @@ class Mailer
             return $this->send('contact.evaluate', $contact['email'], [
                 'user' => $user,
                 'contact' => $contact,
-                'urlEvaluation'=>getenv('URL_FRONT').'/evaluation/'.$hash,
-                'login'=>getenv('URL_FRONT').'/se-connecter'
+                'urlEvaluation'=>'https://itcommunity.fr/evaluation/'.$hash,
+                'login'=>'https://itcommunity.fr/se-connecter'
             ]);
     }
 
@@ -45,8 +46,8 @@ class Mailer
             'user' => $message->getUser(),
             'contact' => $message->getContact(),
             'hash'=>$message->getHash(),
-            'urlFront'=>getenv('URL_FRONT').'/user/log',
-            'login'=>getenv('URL_FRONT').'/se-connecter'
+            'urlFront'=>'https://itcommunity.fr/devenir-un-utilisateur',
+            'login'=>'https://itcommunity.fr/se-connecter'
         ]);
     }
 
@@ -55,7 +56,7 @@ class Mailer
         return $this->send('user.activation', $user->getEmail(), [
             'user' => $user,
             'hash'=>$user->getHash(),
-            'login'=>getenv('URL_FRONT').'/se-connecter'
+            'login'=>'https://itcommunity.fr/se-connecter'
         ]);
     }
 
@@ -64,8 +65,17 @@ class Mailer
         return $this->send('user.message_private', $user->getEmail(), [
             'user' => $user,
             'message' => $message,
-            'login'=>getenv('URL_FRONT').'/se-connecter'
+            'login'=>'https://itcommunity.fr/se-connecter'
         ], [$message->getContact()->getEmail()]);
+    }
+
+    public function sendAnswerMessageMail(Message $message, Contact $contact)
+    {
+        return $this->send('contact.message', $contact->getEmail(), [
+            'contact' => $contact,
+            'message' => $message,
+            'login'=>'https://itcommunity.fr/se-connecter'
+        ], [$message->getUser()->getEmail()]);
     }
 
     public function sendPublicMessageMail(Message $message, User $user)
@@ -73,16 +83,26 @@ class Mailer
        return $this->send('user.message_public', $user->getEmail(), [
             'user' => $user,
             'message'=>$message,
-            'urlFront'=>getenv('URL_FRONT').'/user/message',
-            'login'=>getenv('URL_FRONT').'/se-connecter'
+            'urlFront'=>'https://itcommunity.fr/user/message',
+            'login'=>'https://itcommunity.fr/se-connecter'
        ], [$message->getContact()->getEmail()]);
+    }
+
+    public function sendNewEvaluationMail(Evaluation $evaluation, User $user)
+    {
+        return $this->send('user.evaluation', $user->getEmail(), [
+            'user' => $user,
+            'evaluation' => $evaluation,
+            'urlFront'=>'https://itcommunity.fr/user/evaluation',
+            'login'=>'https://itcommunity.fr/se-connecter'
+        ], [$evaluation->getContact()->getEmail()]);
     }
 
     public function sendContactFormMail(ContactForm $contactForm)
     {
         return $this->send('admin.contact_us', getenv('MAILER_FROM_CONTACT'), [
             'contactForm' => $contactForm,
-            'login'=>getenv('URL_FRONT').'/se-connecter'
+            'login'=>'https://itcommunity.fr/se-connecter'
         ]);
     }
 
@@ -90,7 +110,7 @@ class Mailer
     {
         return $this->send('admin.bug_report', getenv('MAILER_FROM_CONTACT'), [
             'bugReport' => $bugReport,
-            'login'=>getenv('URL_FRONT').'/se-connecter'
+            'login'=>'https://itcommunity.fr/se-connecter'
         ]);
     }
 

@@ -20,6 +20,11 @@ mail:
     bug_report:
       subject: "Signalement d'un bug"
   contact:
+    message:
+      subject: "On vous a répondu !"
+      content: "Vous avez posé une question à "
+      answer: "Voici ci dessous sa réponse :"
+      discute: "Si vous souhaitez discuter d'avantage avec cette personne, vous pouvez la contacter par email : "
     evaluate:
       subject: 'Laissez un avis à votre Utilisateur'
       content: 'Vous avez discuté avec'
@@ -41,6 +46,12 @@ mail:
       button: 'Inscrivez-vous maintenant'
       question: 'Vous avez des questions sur le programme ? N’hésitez pas à nous contacter par e-mail en utilisant le bouton "Contact" sur le site.'
   user:
+    evaluation:
+      subject: "Vous avez reçu une évaluation !"
+      content: "Vous avez reçu récemment une évaluation de la part de "
+      eval: "Voici son avis :"
+      rating: "Vous pouvez accéder à son avis plus en détail sur votre Espace Personnel en cliquant sur le bouton ci-dessous."
+      button: "Mes évaluations"
     message_private:
       subject: 'Vous avez reçu un nouveau message depuis la plateforme ITCommunity'
       content: 'Ce message vous a été envoyé par l’un de vos contacts'
