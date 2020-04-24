@@ -49,6 +49,7 @@ class MessageController extends AbstractController implements ControllerInterfac
      * MessageController constructor.
      * @param UserManager $userManager
      * @param ContactManager $contactManager
+     * @param Mailer $mailer
      */
     public function __construct(UserManager $userManager, ContactManager $contactManager, Mailer $mailer)
     {

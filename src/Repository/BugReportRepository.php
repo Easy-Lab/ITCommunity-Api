@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\BugReport;
 use App\Interfaces\RepositoryInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**

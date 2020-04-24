@@ -77,7 +77,7 @@ class BugReport
      *
      * @JMS\Expose
      */
-    private $solved = 0;
+    private $solved;
 
     public function getId(): ?int
     {
