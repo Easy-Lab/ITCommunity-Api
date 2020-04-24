@@ -37,6 +37,7 @@ mail:
       bye: 'A bientôt,'
       pts: "PS : Votre Utilisateur gagnera entre 25 et 45 points de classement si vous l'évaluez."
     discover:
+      subject: "Rejoignez les utilisateurs ITCommunity !"
       title: 'viens de vous envoyez une invitation afin de rejoindre la plateforme ITCommunity.'
       content: 'Vous pourrez ainsi :'
       step1: 'Partagez votre expérience avec votre entourage et les internautes'
