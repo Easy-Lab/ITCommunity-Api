@@ -48,7 +48,7 @@ class Mailer
             'firstname' => $affiliate->getFirstname(),
             'lastname' => $affiliate->getLastname(),
             'hash'=>$affiliate->getHash(),
-            'urlFront'=>getenv('URL_FRONT').'/user/log',
+            'urlFront'=>getenv('URL_FRONT').'/discover',
             'login'=>getenv('URL_FRONT').'/se-connecter'
         ]);
     }
