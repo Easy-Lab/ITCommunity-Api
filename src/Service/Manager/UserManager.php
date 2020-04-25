@@ -136,6 +136,23 @@ class UserManager
     }
 
     /**
+     * Finds a user by hash.
+     *
+     * @param $hash
+     * @return object|User|UserInterface
+     */
+    public function findUserByHash($hash)
+    {
+        foreach ($this->findUsers() as $user) {
+            if ($user->getHash() === $hash) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Finds a user by email or username.
      *
      * @param $param

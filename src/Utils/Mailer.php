@@ -116,6 +116,15 @@ class Mailer
         ]);
     }
 
+    public function sendRequestPasswordMail(User $user)
+    {
+        return $this->send('account.forgot_password', $user->getEmail(), [
+            'user' => $user,
+            'urlFront'=>'https://itcommunity.fr/user/forgot-password/'.$user->getHash(),
+            'login'=>'https://itcommunity.fr/se-connecter'
+        ]);
+    }
+
     public function send($slug, $to, array $vars, $replyTo = [], $object=null, $mailAdmin=null)
     {
         $success = false;

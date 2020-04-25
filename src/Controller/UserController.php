@@ -18,6 +18,7 @@ use App\Service\Manager\AffiliateManager;
 use App\Service\Manager\PointManager;
 use App\Service\Manager\UserManager;
 use App\Service\UserService;
+use App\Utils\Mailer;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
@@ -57,19 +58,26 @@ class UserController extends AbstractController implements ControllerInterface
     protected $geolocationService;
 
     /**
+     * @var Mailer
+     */
+    private $mailer;
+
+    /**
      * UserController constructor.
      * @param UserManager $userManager
      * @param AffiliateManager $affiliateManager
      * @param PointManager $pointManager
      * @param UserService $userService
      * @param GeolocationService $geolocationService
+     * @param Mailer $mailer
      */
     public function __construct(
         UserManager $userManager,
         AffiliateManager $affiliateManager,
         PointManager $pointManager,
         UserService $userService,
-        GeolocationService $geolocationService
+        GeolocationService $geolocationService,
+        Mailer $mailer
     )
     {
         parent::__construct(User::class);
@@ -79,6 +87,7 @@ class UserController extends AbstractController implements ControllerInterface
         $this->pointManager = $pointManager;
         $this->userService = $userService;
         $this->geolocationService = $geolocationService;
+        $this->mailer = $mailer;
     }
 
     /**
@@ -376,6 +385,89 @@ class UserController extends AbstractController implements ControllerInterface
         }
 
         return $this->createResourceResponse($user, Response::HTTP_CREATED);
+    }
+
+    /**
+     * Send email request password.
+     *
+     * @Route(path="/request_password/{email}", name="api_user_request_password", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Send request password mail.",
+     *     @SWG\Schema(
+     *         type="array",
+     *         title="message",
+     *         @SWG\Items(ref=@Model(type=User::class))
+     *     )
+     * )
+     *
+     * @param string $email
+     *
+     * @return JsonResponse
+     */
+    public function SendRequestPassword(string $email): JsonResponse
+    {
+        $userEmailExist = $this->userManager->findUserByEmail($email);
+
+        try {
+            if (!$userEmailExist){
+                return new JsonResponse($email, Response::HTTP_NOT_FOUND);
+            }
+            $user = $userEmailExist;
+            $this->mailer->sendRequestPasswordMail($user);
+        } catch (ApiException $e) {
+            return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->createResourceResponse($user, Response::HTTP_CREATED);
+    }
+
+    /**
+     * Edit password User.
+     *
+     * @Route(path="/forgot_password/{hash}", name="api_user_edit_password", methods={Request::METHOD_PATCH})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Updates User of given identifier and returns the updated object.",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=User::class))
+     *     )
+     * )*
+     *
+     * @param Request $request
+     * @param string $hash
+     *
+     * @return JsonResponse
+     *
+     */
+    public function updatePasswordAction(Request $request, string $hash): JsonResponse
+    {
+        $user = $this->userManager->findUserByHash($hash);
+
+        if (!$user) {
+            return $this->createNotFoundResponse();
+        }
+
+        $form = $this->getForm(
+            UserType::class,
+            $user,
+            [
+                'method' => $request->getMethod(),
+            ]
+        );
+
+        try {
+            $this->formHandler->process($request, $form);
+        } catch (ApiException $e) {
+            return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+        dd($user);
+        return $this->createResourceResponse($user);
     }
 
     /**
