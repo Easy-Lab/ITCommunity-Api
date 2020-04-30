@@ -453,6 +453,10 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
+        if ($user->getRoles() === ["ROLE_ADMIN"]) {
+            return $this->createForbiddenResponse();
+        }
+
         $form = $this->getForm(
             UserType::class,
             $user,
@@ -466,7 +470,7 @@ class UserController extends AbstractController implements ControllerInterface
         } catch (ApiException $e) {
             return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
-        dd($user);
+
         return $this->createResourceResponse($user);
     }
 

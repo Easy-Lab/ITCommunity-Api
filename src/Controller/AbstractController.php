@@ -28,6 +28,7 @@ abstract class AbstractController extends Controller
 
     public const DELETED = ['success' => 'Deleted.'];
     public const NOT_FOUND = ['error' => 'Resource not found.'];
+    public const FORBIDDEN = ['error' => 'This operation is not authorized.'];
     public const ALREDY_EXIST = ['error' => 'User alredy exist with this email or username.'];
     public const ALREDY_EVALUATION = ['error' => 'You have alredy evaluate this user.'];
     public const GENERAL_ERROR = ['error' => 'Something went wrong.'];
@@ -131,6 +132,17 @@ abstract class AbstractController extends Controller
 
         return $this->responseCreator->getResponse(Response::HTTP_NOT_FOUND, $this->getEntityResponseField());
     }
+
+    /**
+     * @return JsonResponse
+     */
+    public function createForbiddenResponse(): JsonResponse
+    {
+        $this->responseCreator->setData(self::FORBIDDEN);
+
+        return $this->responseCreator->getResponse(Response::HTTP_FORBIDDEN, $this->getEntityResponseField());
+    }
+
 
     /**
      * @return JsonResponse
