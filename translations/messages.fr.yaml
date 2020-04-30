@@ -68,3 +68,8 @@ mail:
       verif: 'Validez votre compte en cliquant sur le bouton ci-dessous'
       verification: 'Je valide mon compte'
       subject: 'Vérification du compte'
+    forgot_password:
+      subject: Mot de passe oublié
+      forgot: "Vous avez oublié votre mot de passe ?"
+      new: "Cliquez sur le bouton ci-dessous pour générer un nouveau mot de passe."
+      mdp: "Nouveau mot de passe"
