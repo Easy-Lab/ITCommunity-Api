@@ -21,7 +21,8 @@ class BugReportType extends AbstractType
             ->add('lastname')
             ->add('email')
             ->add('subject')
-            ->add('body');
+            ->add('body')
+            ->add('solved');
     }
 
     /**
