@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Traits\IdColumnTrait;
 use App\Traits\TimeAwareTraitPublic;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -66,6 +67,14 @@ class Evaluation
      * @JMS\Expose
      */
     private $feedback;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="message", cascade={"persist", "remove"})
+     *
+     * @JMS\Expose
+     * @JMS\Groups("points")
+     */
+    private $points;
 
     public function getId(): ?int
     {
@@ -130,5 +139,13 @@ class Evaluation
         $this->feedback = $feedback;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Point[]
+     */
+    public function getPoint(): Collection
+    {
+        return $this->points;
     }
 }

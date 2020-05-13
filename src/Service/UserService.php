@@ -70,4 +70,14 @@ class UserService
             return null;
         }
     }
+
+    /**
+     * @param User $user
+     */
+    public function encodePassword(User $user): void
+    {
+        $encoded = $this->encoder->encodePassword($user, $user->getPlainPassword());
+
+        $user->setPassword($encoded);
+    }
 }

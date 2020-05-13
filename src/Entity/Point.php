@@ -56,7 +56,7 @@ class Point
     private $message;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Evaluation")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Evaluation", inversedBy="points")
      *
      * @JMS\Expose
      * @JMS\Groups("evaluations")
@@ -64,7 +64,7 @@ class Point
     private $evaluation;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Review")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Review", inversedBy="points")
      *
      * @JMS\Expose
      * @JMS\Groups("review")
@@ -73,6 +73,9 @@ class Point
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Affiliate", inversedBy="points")
+     *
+     * @JMS\Expose
+     * @JMS\Groups("affiliate")
      */
     private $affiliate;
 
