@@ -12,7 +12,7 @@ class UserControllerTest extends AbstractWebTestCase
     /**
      * @var int
      */
-    protected static $entityId;
+    protected static $username;
 
     protected static $email;
 
@@ -27,8 +27,16 @@ class UserControllerTest extends AbstractWebTestCase
             [],
             [],
             json_encode([
-                'fullName' => 'Test User',
+                'firstname' => 'Firstname',
+                'lastname' => 'Lastname',
                 'email' => self::$email,
+                'username' => 'Username',
+                'address' => 'Address',
+                'city' => 'Paris',
+                'zipcode' => '75000',
+                'phone' => '00000000',
+                'step' => 3,
+                'informations_enabled' => true,
                 'plainPassword' => 'test',
             ])
         );
@@ -44,34 +52,9 @@ class UserControllerTest extends AbstractWebTestCase
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('id', $responseContent);
+        $this->assertArrayHasKey('username', $responseContent);
 
-        self::$entityId = $responseContent['id'];
-    }
-
-    public function testBadRequestCreateAction()
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            '/users',
-            [],
-            [],
-            [],
-            json_encode([
-                'fullName' => 'Test User',
-                'email' => self::$email,
-                'plainPassword' => 'test',
-            ])
-        );
-
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-
-        $this->assertTrue(
-            $this->client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
+        self::$username = $responseContent['username'];
     }
 
     public function testUnauthorizedUpdateAction()
@@ -80,7 +63,7 @@ class UserControllerTest extends AbstractWebTestCase
 
         $this->client->request(
             Request::METHOD_PATCH,
-            sprintf('/users/%d', self::$entityId),
+            sprintf('/users/%s', self::$username),
             [],
             [],
             [],
@@ -103,12 +86,12 @@ class UserControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_PATCH,
-            sprintf('/users/%d', self::$entityId),
+            sprintf('/users/%s', self::$username),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
             json_encode([
-                'email' => self::$email,
+                'step' => 2,
             ])
         );
 
@@ -120,17 +103,13 @@ class UserControllerTest extends AbstractWebTestCase
                 'application/json'
             )
         );
-
-        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
-
-        $this->assertSame('email', array_search(self::$email, $responseContent));
     }
 
     public function testNotFoundUpdateAction()
     {
         $this->client->request(
             Request::METHOD_PATCH,
-            '/users/0',
+            '/users/username',
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
@@ -167,7 +146,7 @@ class UserControllerTest extends AbstractWebTestCase
 
     public function testFilterListAction()
     {
-        $this->client->request(Request::METHOD_GET, sprintf('/users?user_filter[email]=%s', self::$email));
+        $this->client->request(Request::METHOD_GET, sprintf('/users?user_filter[username]=%s', self::$username));
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
@@ -182,12 +161,12 @@ class UserControllerTest extends AbstractWebTestCase
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertSame('email', array_search(self::$email, $responseContent['users'][0]));
+        $this->assertSame('username', array_search(self::$username, $responseContent['users'][0]));
     }
 
     public function testShowAction()
     {
-        $this->client->request(Request::METHOD_GET, sprintf('/users/%d', self::$entityId));
+        $this->client->request(Request::METHOD_GET, sprintf('/users/%s', self::$username));
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
@@ -200,12 +179,12 @@ class UserControllerTest extends AbstractWebTestCase
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertSame('id', array_search(self::$entityId, $responseContent));
+        $this->assertSame('username', array_search(self::$username, $responseContent));
     }
 
     public function testNotFoundShowAction()
     {
-        $this->client->request(Request::METHOD_GET, '/users/0');
+        $this->client->request(Request::METHOD_GET, '/users/username');
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
 
@@ -219,7 +198,7 @@ class UserControllerTest extends AbstractWebTestCase
 
     public function testUnauthorizedDeleteAction()
     {
-        $this->client->request(Request::METHOD_DELETE, sprintf('/users/%d', self::$entityId));
+        $this->client->request(Request::METHOD_DELETE, sprintf('/users/%s', self::$username));
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
 
@@ -235,7 +214,7 @@ class UserControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_DELETE,
-            sprintf('/users/%d', self::$entityId),
+            sprintf('/users/Username'),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token]
@@ -255,7 +234,7 @@ class UserControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_DELETE,
-            '/users/0',
+            '/users/Username',
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token]

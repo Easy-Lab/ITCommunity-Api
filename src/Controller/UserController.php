@@ -371,15 +371,18 @@ class UserController extends AbstractController implements ControllerInterface
         );
 
         try {
+            if ($userAffiliateExist) {
+                $point = new Point();
+                $point->setUser($user);
+                $point->setAffiliate($userAffiliateExist);
+                $point->setAmount(15);
+                $point->setType('Accepte Affiliate');
+                $this->entityManager->persist($point);
+                $this->entityManager->flush();
+            }
+            $this->geolocationService->retrieveGeocode($user);
             $this->formHandler->process($request, $form);
             $this->geolocationService->retrieveGeocode($user);
-            $point = new Point();
-            $point->setUser($user);
-            $point->setAffiliate($userAffiliateExist);
-            $point->setAmount(15);
-            $point->setType('Accepte Affiliate');
-            $this->entityManager->persist($point);
-            $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
@@ -448,7 +451,7 @@ class UserController extends AbstractController implements ControllerInterface
     public function updatePasswordAction(Request $request, string $hash): JsonResponse
     {
         $data = \json_decode($request->getContent(), true);
-        
+
         $user = $this->userManager->findUserByHash($hash);
         $password = $data['plainPassword'];
 
@@ -534,7 +537,7 @@ class UserController extends AbstractController implements ControllerInterface
     /**
      * Delete User.
      *
-     * @Route(path="/{hash}", name="api_user_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{username}", name="api_user_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="User")
      * @SWG\Response(
@@ -542,15 +545,14 @@ class UserController extends AbstractController implements ControllerInterface
      *     description="Delete User of given identifier and returns the empty object.",
      * )
      *
-     * @param string $hash
-     *
+     * @param string $username
      * @return JsonResponse
      *
      * @Security("is_granted('CAN_DELETE_USER', user)")
      */
-    public function deleteAction(string $hash): JsonResponse
+    public function deleteAction(string $username): JsonResponse
     {
-        $user = $this->userManager->findUserByHash($hash);
+        $user = $this->userManager->findUserByUsername($username);
 
         if (!$user) {
             return $this->createNotFoundResponse();

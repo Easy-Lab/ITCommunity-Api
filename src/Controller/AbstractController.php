@@ -140,7 +140,7 @@ abstract class AbstractController extends Controller
     {
         $this->responseCreator->setData(self::FORBIDDEN);
 
-        return $this->responseCreator->getResponse(Response::HTTP_FORBIDDEN, $this->getEntityResponseField());
+        return $this->responseCreator->getResponse(Response::HTTP_UNAUTHORIZED, $this->getEntityResponseField());
     }
 
 

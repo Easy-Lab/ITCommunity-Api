@@ -11,6 +11,7 @@ use App\Exception\ApiException;
 use App\Form\Filter\ReviewFilter;
 use App\Form\ReviewType;
 use App\Interfaces\ControllerInterface;
+use App\Service\UserService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
@@ -25,11 +26,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class ReviewController extends AbstractController implements ControllerInterface
 {
     /**
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
      * ReviewController constructor.
      */
-    public function __construct()
+    public function __construct(UserService $userService)
     {
         parent::__construct(Review::class);
+        $this->userService = $userService;
     }
 
     /**
@@ -64,14 +71,14 @@ class ReviewController extends AbstractController implements ControllerInterface
     /**
      * Show single Reviews.
      *
-     * @Route(path="/{hash}", name="api_review_show", methods={Request::METHOD_GET})
+     * @Route(path="/{hash}", name="api_single_review_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="Review")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns review of given identifier.",
+     *     description="Returns review of given hash.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="review",
      *         @SWG\Items(ref=@Model(type=Review::class))
      *     )
@@ -83,7 +90,6 @@ class ReviewController extends AbstractController implements ControllerInterface
      */
     public function showAction(Review $review = null): JsonResponse
     {
-
         if (!$review) {
             return $this->createNotFoundResponse();
         }
@@ -115,9 +121,15 @@ class ReviewController extends AbstractController implements ControllerInterface
      */
     public function createAction(Request $request, Review $review = null): JsonResponse
     {
+        $user = $this->userService->getCurrentUser();
+
+        if ($user === "anon.") {
+            return $this->createForbiddenResponse();
+        }
+
         if (!$review) {
             $review = new Review();
-            $review->setUser($this->getUser());
+            $review->setUser($user);
         }
 
         $form = $this->getForm(
@@ -132,7 +144,7 @@ class ReviewController extends AbstractController implements ControllerInterface
             $this->formHandler->process($request, $form);
             $point = new Point();
             $point->setReview($review);
-            $point->setUser($this->getUser());
+            $point->setUser($user);
             $point->setAmount(25);
             $point->setType('Review');
             $this->entityManager->persist($point);

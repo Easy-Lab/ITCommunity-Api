@@ -87,7 +87,7 @@ class Review
     private $type;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="message", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="review", cascade={"persist", "remove"})
      *
      * @JMS\Expose
      * @JMS\Groups("points")
