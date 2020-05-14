@@ -27,7 +27,7 @@ class DeleteUserVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         // Our previous business logic indicates that admins can do it regardless
-        if (\in_array(\implode($token->getRoleNames()), ['ROLE_ADMIN'])) {
+        if (\in_array(\implode($token->getRoleNames()), ['ROLE_ADMIN','ROLE_USER'])) {
             return true;
         }
 
