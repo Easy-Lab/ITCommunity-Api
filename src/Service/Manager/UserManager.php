@@ -108,9 +108,8 @@ class UserManager
     public function findUserByEmail($email)
     {
         foreach ($this->findUsers() as $user) {
-            $userDecrypte = $this->userService->getUncrypted($user, 'email');
 
-            if ($userDecrypte === $email) {
+            if ($user->getEmail() === $email) {
                 return $user;
             }
         }
