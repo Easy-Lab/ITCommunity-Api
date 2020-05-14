@@ -1,0 +1,8 @@
+App\Entity\Affiliate:
+  affiliate_{1..20}:
+    user: '@user*'
+    firstname: <firstName()>
+    lastname: <lastName()>
+    email: <email()>
+    body: <paragraph(3, 8)>
+    status: <boolean(50)>

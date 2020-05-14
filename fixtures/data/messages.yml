@@ -1,0 +1,13 @@
+App\Entity\Message:
+  message_{1..10}:
+    contact: '@contact*'
+    user: '@user*'
+    type: <boolean(50)>
+    question: <paragraph(1, 2)>
+  message_{11..20}:
+    contact: '@contact*'
+    user: '@user*'
+    type: <boolean(50)>
+    question: <paragraph(3, 8)>
+    answer: <paragraph(1, 2)>
+

@@ -37,14 +37,14 @@ class Picture
      *
      * @JMS\Expose
      */
-    private $hash;
+    private $path;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
      * @JMS\Expose
      */
-    private $path;
+    private $hash;
 
     public function getUser(): ?User
     {
@@ -70,18 +70,6 @@ class Picture
         return $this;
     }
 
-    public function getHash(): ?string
-    {
-        return $this->hash;
-    }
-
-    public function setHash(string $hash): self
-    {
-        $this->hash = $hash;
-
-        return $this;
-    }
-
     public function getPath(): ?string
     {
         return $this->path;
@@ -90,6 +78,18 @@ class Picture
     public function setPath(string $path): self
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
 
         return $this;
     }

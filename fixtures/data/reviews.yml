@@ -1,8 +1,8 @@
 App\Entity\Review:
-  review_{1..100}:
+  review_{1..50}:
     type: <paragraph(1, 2)>
     body: <paragraph(3, 8)>
-    rating: <numberBetween(1, 10)>
+    rating: <numberBetween(1, 5)>
     user: '@user*'
     name_component: <paragraph(1, 2)>
     company_component: <paragraph(1, 2)>

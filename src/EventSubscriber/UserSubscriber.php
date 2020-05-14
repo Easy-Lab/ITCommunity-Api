@@ -72,7 +72,7 @@ class UserSubscriber implements EventSubscriber
         $subject = $args->getEntity();
 
         if ($subject instanceof User) {
-            $this->encodePassword($subject);
+            $this->userService->encodePassword($subject);
             $subject->setHash(sha1((string)microtime(true)));
             $subject->setTosAcceptedAt(new \DateTime());
             $this->userService->setCrypted($subject, 'firstname', $subject->getFirstname());
@@ -186,7 +186,6 @@ class UserSubscriber implements EventSubscriber
         $subject = $args->getEntity();
 
         if ($subject instanceof User) {
-            $this->encodePassword($subject);
             $this->userService->setCrypted($subject, 'firstname', $subject->getFirstname());
             $this->userService->setCrypted($subject, 'lastname', $subject->getLastname());
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
@@ -348,15 +347,5 @@ class UserSubscriber implements EventSubscriber
             $subject->setLastname($lastname);
             $subject->setEmail($email);
         }
-    }
-
-    /**
-     * @param User $user
-     */
-    protected function encodePassword(User $user): void
-    {
-        $encoded = $this->encoder->encodePassword($user, $user->getPlainPassword());
-
-        $user->setPassword($encoded);
     }
 }

@@ -66,18 +66,18 @@ class BugReport
     private $body;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     *
-     * @JMS\Expose
-     */
-    private $hash;
-
-    /**
      * @ORM\Column(type="boolean")
      *
      * @JMS\Expose
      */
     private $solved;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
+     */
+    private $hash;
 
     public function getId(): ?int
     {
@@ -144,18 +144,6 @@ class BugReport
         return $this;
     }
 
-    public function getHash(): ?string
-    {
-        return $this->hash;
-    }
-
-    public function setHash(string $hash): self
-    {
-        $this->hash = $hash;
-
-        return $this;
-    }
-
     public function getSolved(): ?bool
     {
         return $this->solved;
@@ -164,6 +152,18 @@ class BugReport
     public function setSolved(?bool $solved): self
     {
         $this->solved = $solved;
+
+        return $this;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
 
         return $this;
     }

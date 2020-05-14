@@ -1,0 +1,8 @@
+App\Entity\ContactForm:
+  form_{1..20}:
+    firstname: <firstName()>
+    lastname: <lastName()>
+    phone: <phoneNumber()>
+    email: <email()>
+    subject: <paragraph(1, 2)>
+    body: <paragraph(3, 8)>

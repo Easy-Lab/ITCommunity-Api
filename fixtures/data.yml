@@ -1,3 +1,11 @@
 include:
   - data/reviews.yml
   - data/users.yml
+  - data/contacts.yml
+  - data/messages.yml
+  - data/evaluations.yml
+  - data/forms.yml
+  - data/reports.yml
+  - data/affiliates.yml
+  - data/pictures.yml
+  - data/points.yml

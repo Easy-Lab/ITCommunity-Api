@@ -447,7 +447,10 @@ class UserController extends AbstractController implements ControllerInterface
      */
     public function updatePasswordAction(Request $request, string $hash): JsonResponse
     {
+        $data = \json_decode($request->getContent(), true);
+        
         $user = $this->userManager->findUserByHash($hash);
+        $password = $data['plainPassword'];
 
         if (!$user) {
             return $this->createNotFoundResponse();
@@ -457,16 +460,11 @@ class UserController extends AbstractController implements ControllerInterface
             return $this->createForbiddenResponse();
         }
 
-        $form = $this->getForm(
-            UserType::class,
-            $user,
-            [
-                'method' => $request->getMethod(),
-            ]
-        );
-
         try {
-            $this->formHandler->process($request, $form);
+            $user->setPlainPassword($password);
+            $this->userService->encodePassword($user);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
@@ -554,6 +552,10 @@ class UserController extends AbstractController implements ControllerInterface
     {
         if (!$user) {
             return $this->createNotFoundResponse();
+        }
+
+        if ($user->getRoles() === ["ROLE_ADMIN"]) {
+            return $this->createForbiddenResponse();
         }
 
         try {
