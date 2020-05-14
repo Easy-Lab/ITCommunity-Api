@@ -534,7 +534,7 @@ class UserController extends AbstractController implements ControllerInterface
     /**
      * Delete User.
      *
-     * @Route(path="/{user}", name="api_user_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_user_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="User")
      * @SWG\Response(
@@ -542,14 +542,16 @@ class UserController extends AbstractController implements ControllerInterface
      *     description="Delete User of given identifier and returns the empty object.",
      * )
      *
-     * @param User $user
+     * @param string $hash
      *
      * @return JsonResponse
      *
      * @Security("is_granted('CAN_DELETE_USER', user)")
      */
-    public function deleteAction(User $user = null): JsonResponse
+    public function deleteAction(string $hash): JsonResponse
     {
+        $user = $this->userManager->findUserByHash($hash);
+
         if (!$user) {
             return $this->createNotFoundResponse();
         }
