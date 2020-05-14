@@ -37,6 +37,12 @@ class CreateReviewVoter extends Voter
             return true;
         }
 
+        $user = $token->getUser();
+
+        if ($user === "anon.") {
+            return false;
+        }
+
         return false;
     }
 }

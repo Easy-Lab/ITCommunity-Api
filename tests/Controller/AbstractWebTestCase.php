@@ -38,6 +38,7 @@ abstract class AbstractWebTestCase extends WebTestCase
     {
         parent::__construct($name, $data, $dataName);
 
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->token = self::getToken();
         $this->faker = Factory::create();
@@ -53,7 +54,7 @@ abstract class AbstractWebTestCase extends WebTestCase
         // returns the real and unchanged service container
         $container = self::$kernel->getContainer();
 
-        $data = ['username' => 'developer@symfony.local', 'roles' => ['ROLE_ADMIN']];
+        $data = ['username' => 'admin', 'roles' => ['ROLE_ADMIN']];
 
         try {
             $token = $container

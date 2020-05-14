@@ -24,7 +24,7 @@ install:
 - ./bin/phpunit install
 
 script:
-- ./bin/phpunit
+- SYMFONY_DEPRECATIONS_HELPER=max[self]=0 ./bin/phpunit
 # this checks that the source code follows the Symfony Code Syntax rules
 - '[[ "$TRAVIS_PHP_VERSION" == "7.2" ]] || ./vendor/bin/php-cs-fixer fix --dry-run -v phpcs.xml.dist'
 - ./bin/console lint:yaml config

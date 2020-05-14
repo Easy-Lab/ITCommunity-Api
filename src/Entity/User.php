@@ -14,7 +14,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(name="app_user")
  *
  * @UniqueEntity({"email"}, message="Email already exists.")
  *

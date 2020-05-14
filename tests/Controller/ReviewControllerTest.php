@@ -12,7 +12,7 @@ class ReviewControllerTest extends AbstractWebTestCase
     /**
      * @var int
      */
-    protected static $entityId;
+    protected static $hash;
 
     /**
      * @var int
@@ -21,7 +21,7 @@ class ReviewControllerTest extends AbstractWebTestCase
 
     public function testUnauthorizedCreateAction()
     {
-        self::$rating = 9;
+        self::$rating = 5;
 
         $this->client->request(
             Request::METHOD_POST,
@@ -32,7 +32,10 @@ class ReviewControllerTest extends AbstractWebTestCase
             json_encode([
                 'body' => 'Ut accusantium ad facere qui est. Voluptas quae rerum voluptas perspiciatis molestiae voluptas assumenda. Nobis impedit laudantium eaque saepe quae.',
                 'rating' => self::$rating,
-                'publicationDate' => '2018-06-24T00:00:00+00:00',
+                'type' => 'Gpu',
+                'name_component' => 'Component',
+                'company_component' => 'Company',
+                'other_information_component' => 'Other'
             ])
         );
 
@@ -48,6 +51,8 @@ class ReviewControllerTest extends AbstractWebTestCase
 
     public function testCreateAction()
     {
+        self::$rating = 5;
+
         $this->client->request(
             Request::METHOD_POST,
             '/reviews',
@@ -57,7 +62,10 @@ class ReviewControllerTest extends AbstractWebTestCase
             json_encode([
                 'body' => 'Ut accusantium ad facere qui est. Voluptas quae rerum voluptas perspiciatis molestiae voluptas assumenda. Nobis impedit laudantium eaque saepe quae.',
                 'rating' => self::$rating,
-                'publicationDate' => '2018-06-24T00:00:00+00:00',
+                'type' => 'Gpu',
+                'name_component' => 'Component',
+                'company_component' => 'Company',
+                'other_information_component' => 'Other'
             ])
         );
 
@@ -72,42 +80,18 @@ class ReviewControllerTest extends AbstractWebTestCase
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('id', $responseContent);
+        $this->assertArrayHasKey('hash', $responseContent);
 
-        self::$entityId = $responseContent['id'];
-    }
-
-    public function testBadRequestCreateAction()
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            '/reviews',
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
-            json_encode([
-                'body' => 'Ut accusantium ad facere qui est. Voluptas quae rerum voluptas perspiciatis molestiae voluptas assumenda. Nobis impedit laudantium eaque saepe quae.',
-                'rating' => self::$rating,
-            ])
-        );
-
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-
-        $this->assertTrue(
-            $this->client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
+        self::$hash = $responseContent['hash'];
     }
 
     public function testUnauthorizedUpdateAction()
     {
-        self::$rating = 7;
+        self::$rating = 4;
 
         $this->client->request(
             Request::METHOD_PATCH,
-            sprintf('/reviews/%d', self::$entityId),
+            sprintf('/reviews/%s', self::$hash),
             [],
             [],
             [],
@@ -130,7 +114,7 @@ class ReviewControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_PATCH,
-            sprintf('/reviews/%d', self::$entityId),
+            sprintf('/reviews/%s', self::$hash),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
@@ -157,12 +141,12 @@ class ReviewControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_PATCH,
-            '/reviews/0',
+            '/reviews/reviews',
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
             json_encode([
-                'rating' => 7,
+                'rating' => 4,
             ])
         );
 
@@ -214,7 +198,16 @@ class ReviewControllerTest extends AbstractWebTestCase
 
     public function testShowAction()
     {
-        $this->client->request(Request::METHOD_GET, sprintf('/reviews/%d', self::$entityId));
+        $this->client->request(
+            Request::METHOD_PATCH,
+            sprintf('/reviews/%s', self::$hash),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
+            json_encode([
+                'rating' => self::$rating,
+            ])
+        );
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
@@ -227,12 +220,12 @@ class ReviewControllerTest extends AbstractWebTestCase
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertSame('id', array_search(self::$entityId, $responseContent));
+        $this->assertSame('hash', array_search(self::$hash, $responseContent));
     }
 
     public function testNotFoundShowAction()
     {
-        $this->client->request(Request::METHOD_GET, '/reviews/0');
+        $this->client->request(Request::METHOD_GET, '/reviews/review');
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
 
@@ -246,7 +239,7 @@ class ReviewControllerTest extends AbstractWebTestCase
 
     public function testUnauthorizedDeleteAction()
     {
-        $this->client->request(Request::METHOD_DELETE, sprintf('/reviews/%d', self::$entityId));
+        $this->client->request(Request::METHOD_DELETE, sprintf('/reviews/%s', self::$hash));
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
 
@@ -262,7 +255,7 @@ class ReviewControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_DELETE,
-            sprintf('/reviews/%d', self::$entityId),
+            sprintf('/reviews/%s', self::$hash),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token]
@@ -282,7 +275,7 @@ class ReviewControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_DELETE,
-            '/reviews/0',
+            '/reviews/review',
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token]
