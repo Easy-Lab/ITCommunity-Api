@@ -93,6 +93,7 @@ class UserSubscriber implements EventSubscriber
 
         if ($subject instanceof Contact) {
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());
+            $subject->setHash(sha1((string)microtime(true)));
         }
 
         if ($subject instanceof Review) {
