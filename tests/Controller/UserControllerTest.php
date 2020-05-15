@@ -214,7 +214,7 @@ class UserControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_DELETE,
-            sprintf('/users/Username'),
+            sprintf('/users/%s', self::$username),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token]

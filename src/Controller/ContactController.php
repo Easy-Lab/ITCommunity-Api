@@ -200,7 +200,7 @@ class ContactController extends AbstractController implements ControllerInterfac
      * @SWG\Tag(name="Contact")
      * @SWG\Response(
      *     response=200,
-     *     description="Delete Contact of given identifier and returns the empty object."
+     *     description="Delete Contact of given hash and returns the empty object."
      * )
      *
      * @param Contact|null $contact

@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
- * @Route(path="/bugrepports")
+ * @Route(path="/bugreports")
  */
 class BugReportController extends AbstractController implements ControllerInterface
 {
@@ -177,5 +177,37 @@ class BugReportController extends AbstractController implements ControllerInterf
         }
 
         return $this->createResourceResponse($bugReport);
+    }
+
+    /**
+     * Delete Bug Report.
+     *
+     * @Route(path="/{hash}", name="api_bug_report_delete", methods={Request::METHOD_DELETE})
+     *
+     * @SWG\Tag(name="Bug Reports")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Delete Bug Report of given hash and returns the empty object."
+     * )
+     *
+     * @param BugReport|null $bugReport
+     * @return JsonResponse
+     *
+     * @Security("is_granted('CAN_DELETE_BUG_REPORT', bugReport)")
+     */
+    public function deleteAction(BugReport $bugReport = null): JsonResponse
+    {
+        if (!$bugReport) {
+            return $this->createNotFoundResponse();
+        }
+
+        try {
+            $this->entityManager->remove($bugReport);
+            $this->entityManager->flush();
+        } catch (\Exception $exception) {
+            return $this->createGenericErrorResponse($exception);
+        }
+
+        return $this->createSuccessfulApiResponse(self::DELETED);
     }
 }
