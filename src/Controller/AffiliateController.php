@@ -140,6 +140,10 @@ class AffiliateController extends AbstractController implements ControllerInterf
             return $this->createNotFoundResponse();
         }
 
+        if ($user === "anon.") {
+            return $this->createForbiddenResponse();
+        }
+
         if (!$affiliate) {
             $affiliate = new Affiliate();
             $affiliate->setUser($user);

@@ -9,19 +9,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ReviewControllerTest extends AbstractWebTestCase
 {
-    /**
-     * @var int
-     */
-    protected static $hash;
-
-    /**
-     * @var int
-     */
+    protected static $body;
     protected static $rating;
+    protected static $type;
+    protected static $name_component;
+    protected static $company_component;
+    protected static $other_information_component;
+    protected static $hash;
 
     public function testUnauthorizedCreateAction()
     {
-        self::$rating = 5;
+        self::$body = $this->faker->paragraphs(1,2);
+        self::$rating = $this->faker->numberBetween(1,5);
+        self::$type = $this->faker->randomElement(['CPU','GPU']);
+        self::$name_component = $this->faker->paragraphs(1,2);
+        self::$company_component = $this->faker->paragraphs(1,2);
+        self::$other_information_component = $this->faker->paragraphs(1,2);
+
 
         $this->client->request(
             Request::METHOD_POST,
@@ -30,12 +34,12 @@ class ReviewControllerTest extends AbstractWebTestCase
             [],
             [],
             json_encode([
-                'body' => 'Ut accusantium ad facere qui est. Voluptas quae rerum voluptas perspiciatis molestiae voluptas assumenda. Nobis impedit laudantium eaque saepe quae.',
+                'body' => self::$body,
                 'rating' => self::$rating,
-                'type' => 'Gpu',
-                'name_component' => 'Component',
-                'company_component' => 'Company',
-                'other_information_component' => 'Other'
+                'type' => self::$type,
+                'name_component' => self::$name_component,
+                'company_component' => self::$company_component,
+                'other_information_component' => self::$other_information_component
             ])
         );
 

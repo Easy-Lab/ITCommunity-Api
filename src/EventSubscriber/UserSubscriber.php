@@ -8,6 +8,7 @@ use App\Entity\Affiliate;
 use App\Entity\BugReport;
 use App\Entity\Contact;
 use App\Entity\ContactForm;
+use App\Entity\Evaluation;
 use App\Entity\Message;
 use App\Entity\Picture;
 use App\Entity\Review;
@@ -106,6 +107,10 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof Picture) {
+            $subject->setHash(sha1((string)microtime(true)));
+        }
+
+        if ($subject instanceof Evaluation) {
             $subject->setHash(sha1((string)microtime(true)));
         }
 
@@ -212,7 +217,6 @@ class UserSubscriber implements EventSubscriber
         }
 
         if ($subject instanceof Affiliate) {
-            $subject->setHash(sha1((string)microtime(true)));
             $this->userService->setCrypted($subject, 'firstname', $subject->getFirstname());
             $this->userService->setCrypted($subject, 'lastname', $subject->getLastname());
             $this->userService->setCrypted($subject, 'email', $subject->getEmail());

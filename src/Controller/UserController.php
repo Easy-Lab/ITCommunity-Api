@@ -170,6 +170,11 @@ class UserController extends AbstractController implements ControllerInterface
     public function showUserReviews(string $username): JsonResponse
     {
         $user = $this->userManager->findUserByUsername($username);
+
+        if(!$user) {
+            return $this->createNotFoundResponse();
+        }
+
         $review = $user->getReviews();
 
 
@@ -202,8 +207,12 @@ class UserController extends AbstractController implements ControllerInterface
     public function showUserMessage(string $username): JsonResponse
     {
         $user = $this->userManager->findUserByUsername($username);
-        $message = $user->getMessages();
 
+        if(!$user) {
+            return $this->createNotFoundResponse();
+        }
+
+        $message = $user->getMessages();
 
         if (!$message) {
             return $this->createNotFoundResponse();
@@ -234,8 +243,12 @@ class UserController extends AbstractController implements ControllerInterface
     public function showUserEvaluation(string $username): JsonResponse
     {
         $user = $this->userManager->findUserByUsername($username);
-        $evaluation = $user->getEvaluations();
 
+        if(!$user) {
+            return $this->createNotFoundResponse();
+        }
+
+        $evaluation = $user->getEvaluations();
 
         if (!$evaluation) {
             return $this->createNotFoundResponse();
@@ -267,6 +280,11 @@ class UserController extends AbstractController implements ControllerInterface
     public function showUserPoint(): JsonResponse
     {
         $user = $this->userService->getCurrentUser();
+
+        if(!$user) {
+            return $this->createNotFoundResponse();
+        }
+
         $points = $this->pointManager->findEvaluationsBy(array('user' => $user));
         $total = 0;
 
@@ -306,6 +324,11 @@ class UserController extends AbstractController implements ControllerInterface
     public function showPictures(string $username): JsonResponse
     {
         $user = $this->userManager->findUserByUsername($username);
+
+        if(!$user) {
+            return $this->createNotFoundResponse();
+        }
+
         $picture = $user->getPictures();
 
         if (!$picture) {
@@ -446,7 +469,6 @@ class UserController extends AbstractController implements ControllerInterface
      * @param string $hash
      *
      * @return JsonResponse
-     *
      */
     public function updatePasswordAction(Request $request, string $hash): JsonResponse
     {
@@ -457,10 +479,6 @@ class UserController extends AbstractController implements ControllerInterface
 
         if (!$user) {
             return $this->createNotFoundResponse();
-        }
-
-        if ($user->getRoles() === ["ROLE_ADMIN"]) {
-            return $this->createForbiddenResponse();
         }
 
         try {
@@ -537,7 +555,7 @@ class UserController extends AbstractController implements ControllerInterface
     /**
      * Delete User.
      *
-     * @Route(path="/{username}", name="api_user_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_user_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="User")
      * @SWG\Response(
@@ -545,21 +563,15 @@ class UserController extends AbstractController implements ControllerInterface
      *     description="Delete User of given identifier and returns the empty object.",
      * )
      *
-     * @param string $username
+     * @param User|null $user
      * @return JsonResponse
      *
      * @Security("is_granted('CAN_DELETE_USER', user)")
      */
-    public function deleteAction(string $username): JsonResponse
+    public function deleteAction(User $user = null): JsonResponse
     {
-        $user = $this->userManager->findUserByUsername($username);
-
         if (!$user) {
             return $this->createNotFoundResponse();
-        }
-
-        if ($user->getRoles() === ["ROLE_ADMIN"]) {
-            return $this->createForbiddenResponse();
         }
 
         try {

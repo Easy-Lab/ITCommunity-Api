@@ -7,32 +7,50 @@ namespace App\Tests\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ContactControllerTest extends AbstractWebTestCase
+class PictureControllerTest extends AbstractWebTestCase
 {
-    /**
-     * @var int
-     */
+    protected static $name;
+    protected static $path;
     protected static $hash;
-    protected static $email;
-    protected static $firstname;
-    protected static $lastname;
 
-    public function testCreateAction()
+    public function testUnauthorizedCreateAction()
     {
-        self::$email = $this->faker->email;
-        self::$firstname = $this->faker->firstName;
-        self::$lastname = $this->faker->lastName;
+        self::$name = $this->faker->userName;
+        self::$path = $this->faker->imageUrl( 640, 480);
 
         $this->client->request(
             Request::METHOD_POST,
-            '/contacts',
+            '/pictures',
             [],
             [],
             [],
             json_encode([
-                'firstname' => self::$firstname,
-                'lastname' => self::$lastname,
-                'email' => self::$email,
+                'name' => self::$name,
+                'path' => self::$path,
+            ])
+        );
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
+
+        $this->assertTrue(
+            $this->client->getResponse()->headers->contains(
+                'Content-Type',
+                'application/json'
+            )
+        );
+    }
+
+    public function testCreateAction()
+    {
+        $this->client->request(
+            Request::METHOD_POST,
+            '/pictures',
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
+            json_encode([
+                'name' => self::$name,
+                'path' => self::$path,
             ])
         );
 
@@ -54,16 +72,16 @@ class ContactControllerTest extends AbstractWebTestCase
 
     public function testUnauthorizedUpdateAction()
     {
-        self::$email = $this->faker->email;
+        self::$path = $this->faker->imageUrl( 640, 480);
 
         $this->client->request(
             Request::METHOD_PATCH,
-            sprintf('/contacts/%s', self::$hash),
+            sprintf('pictures/%s', self::$hash),
             [],
             [],
             [],
             json_encode([
-                'email' => self::$email,
+                'path' => self::$path,
             ])
         );
 
@@ -81,12 +99,12 @@ class ContactControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_PATCH,
-            sprintf('/contacts/%s', self::$hash),
+            sprintf('/pictures/%s', self::$hash),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
             json_encode([
-                'email' => self::$email,
+                'path' => self::$path,
             ])
         );
 
@@ -104,12 +122,12 @@ class ContactControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_PATCH,
-            '/contacts/contact',
+            '/pictures/picture',
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token],
             json_encode([
-                'email' => self::$email,
+                'path' => self::$path,
             ])
         );
 
@@ -125,7 +143,7 @@ class ContactControllerTest extends AbstractWebTestCase
 
     public function testListAction()
     {
-        $this->client->request(Request::METHOD_GET, '/contacts');
+        $this->client->request(Request::METHOD_GET, '/pictures');
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
@@ -136,12 +154,12 @@ class ContactControllerTest extends AbstractWebTestCase
             )
         );
 
-        $this->assertContains('contacts', $this->client->getResponse()->getContent());
+        $this->assertContains('pictures', $this->client->getResponse()->getContent());
     }
 
     public function testFilterListAction()
     {
-        $this->client->request(Request::METHOD_GET, sprintf('/contacts?contact_filter[hash]=%s', self::$hash));
+        $this->client->request(Request::METHOD_GET, sprintf('/pictures?picture_filter[hash]=%s', self::$hash));
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
@@ -152,16 +170,16 @@ class ContactControllerTest extends AbstractWebTestCase
             )
         );
 
-        $this->assertContains('contacts', $this->client->getResponse()->getContent());
+        $this->assertContains('pictures', $this->client->getResponse()->getContent());
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertSame('hash', array_search(self::$hash, $responseContent['contacts'][0]));
+        $this->assertSame('hash', array_search(self::$hash, $responseContent['pictures'][0]));
     }
 
     public function testShowAction()
     {
-        $this->client->request(Request::METHOD_GET, sprintf('/contacts/%s', self::$hash));
+        $this->client->request(Request::METHOD_GET, sprintf('/pictures/%s', self::$hash));
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
@@ -174,12 +192,12 @@ class ContactControllerTest extends AbstractWebTestCase
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertSame('hash', array_search(self::$hash, $responseContent));
+        $this->assertSame('hash', array_search(self::$hash, $responseContent, true));
     }
 
     public function testNotFoundShowAction()
     {
-        $this->client->request(Request::METHOD_GET, '/contacts/contact');
+        $this->client->request(Request::METHOD_GET, '/pictures/picture');
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
 
@@ -193,7 +211,7 @@ class ContactControllerTest extends AbstractWebTestCase
 
     public function testUnauthorizedDeleteAction()
     {
-        $this->client->request(Request::METHOD_DELETE, sprintf('/contacts/%s', self::$hash));
+        $this->client->request(Request::METHOD_DELETE, sprintf('/pictures/%s', self::$hash));
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
 
@@ -209,7 +227,7 @@ class ContactControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_DELETE,
-            sprintf('/contacts/%s', self::$hash),
+            sprintf('/pictures/%s', self::$hash),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token]
@@ -229,7 +247,7 @@ class ContactControllerTest extends AbstractWebTestCase
     {
         $this->client->request(
             Request::METHOD_DELETE,
-            '/contacts/contact',
+            sprintf('/pictures/%s', self::$hash),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'Bearer '.$this->token]

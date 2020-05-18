@@ -10,6 +10,7 @@ use App\Exception\ApiException;
 use App\Form\Filter\PictureFilter;
 use App\Form\PictureType;
 use App\Interfaces\ControllerInterface;
+use App\Service\UserService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
@@ -19,16 +20,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route(path="/picture")
+ * @Route(path="/pictures")
  */
 class PictureController extends AbstractController implements ControllerInterface
 {
     /**
-     * ReviewController constructor.
+     * @var UserService
      */
-    public function __construct()
+    protected $userService;
+
+    /**
+     * ReviewController constructor.
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
     {
         parent::__construct(Picture::class);
+        $this->userService = $userService;
     }
 
     /**
@@ -113,9 +121,19 @@ class PictureController extends AbstractController implements ControllerInterfac
      */
     public function createAction(Request $request, Picture $picture = null): JsonResponse
     {
+        $user = $this->userService->getCurrentUser();
+
+        if (!$user) {
+            $this->createNotFoundException();
+        }
+
+        if ($user === "anon.") {
+            return $this->createForbiddenResponse();
+        }
+
         if (!$picture) {
             $picture = new Picture();
-            $picture->setUser($this->getUser());
+            $picture->setUser($user);
         }
 
         $form = $this->getForm(
@@ -138,7 +156,7 @@ class PictureController extends AbstractController implements ControllerInterfac
     /**
      * Edit existing Picture.
      *
-     * @Route(path="/{picture}", name="api_picture_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/{hash}", name="api_picture_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="Picture")
      * @SWG\Response(
@@ -161,16 +179,6 @@ class PictureController extends AbstractController implements ControllerInterfac
     {
         if (!$picture) {
             return $this->createNotFoundResponse();
-        }
-
-        if (($picture->getAuthor() !== $this->getUser()) && ($this->getUser()->getRoles() === ['ROLE_USER'])) {
-            return $this->createNotFoundResponse();
-        }
-
-        if($this->getUser()->getRoles() === ['ROLE_USER'] || $this->getUser()->getRoles() === ['ROLE_MODERATOR']) {
-            if($picture->getAuthor()->getRoles() === ['ROLE_ADMIN']) {
-                return $this->createNotFoundResponse();
-            }
         }
 
         $form = $this->getForm(
@@ -211,12 +219,6 @@ class PictureController extends AbstractController implements ControllerInterfac
     {
         if (!$picture) {
             return $this->createNotFoundResponse();
-        }
-
-        if($this->getUser()->getRoles() === ['ROLE_USER'] || $this->getUser()->getRoles() === ['ROLE_MODERATOR']) {
-            if($picture->getUser()->getRoles() === ['ROLE_ADMIN']) {
-                return $this->createNotFoundResponse();
-            }
         }
 
         try {

@@ -9,9 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BugReportControllerTest extends AbstractWebTestCase
 {
-    /**
-     * @var int
-     */
     protected static $hash;
     protected static $email;
     protected static $firstname;
@@ -156,8 +153,8 @@ class BugReportControllerTest extends AbstractWebTestCase
         );
 
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
-        
-        $this->assertSame('solved', array_search(self::$hash, $responseContent));
+
+        $this->assertSame('hash', array_search(self::$hash, $responseContent, true));
     }
 
     public function testNotFoundShowAction()
