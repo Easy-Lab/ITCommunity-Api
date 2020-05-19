@@ -56,14 +56,6 @@ class Message
     private $answer;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     *
-     * @JMS\Expose(
-     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_MESSAGE', object)")
-     */
-    private $hash;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
      *
@@ -90,6 +82,14 @@ class Message
      */
     private $points;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_MESSAGE', object)")
+     */
+    private $hash;
+
     public function __construct()
     {
         $this->evaluations = new ArrayCollection();
@@ -113,12 +113,12 @@ class Message
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?bool
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?bool $type): self
     {
         $this->type = $type;
 
@@ -149,18 +149,6 @@ class Message
         return $this;
     }
 
-    public function getHash(): ?string
-    {
-        return $this->hash;
-    }
-
-    public function setHash(string $hash): self
-    {
-        $this->hash = $hash;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -187,5 +175,18 @@ class Message
     public function getPoint(): Collection
     {
         return $this->points;
+    }
+
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
+
+        return $this;
     }
 }

@@ -71,7 +71,7 @@ class ContactController extends AbstractController implements ControllerInterfac
     /**
      * Show single Contact.
      *
-     * @Route(path="/{contact}", name="api_contact_show", methods={Request::METHOD_GET})
+     * @Route(path="/{hash}", name="api_contact_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="Contact")
      * @SWG\Response(
@@ -150,7 +150,7 @@ class ContactController extends AbstractController implements ControllerInterfac
     /**
      * Edit existing Contact.
      *
-     * @Route(path="/{contact}", name="api_contact_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/{hash}", name="api_contact_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="Contact")
      * @SWG\Response(
@@ -195,12 +195,12 @@ class ContactController extends AbstractController implements ControllerInterfac
     /**
      * Delete Contact.
      *
-     * @Route(path="/{contact}", name="api_contact_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_contact_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="Contact")
      * @SWG\Response(
      *     response=200,
-     *     description="Delete Contact of given identifier and returns the empty object."
+     *     description="Delete Contact of given hash and returns the empty object."
      * )
      *
      * @param Contact|null $contact

@@ -74,6 +74,12 @@ class Contact
      */
     private $evaluations;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @JMS\Expose
+     */
+    private $hash;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
@@ -179,6 +185,25 @@ class Contact
                 $evaluation->setContact(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @param string $hash
+     * @return Review
+     */
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
 
         return $this;
     }

@@ -18,6 +18,7 @@ class PictureFilter extends AbstractType
     {
         $builder
             ->add('name', Filters\TextFilterType::class)
+            ->add('hash', Filters\TextFilterType::class)
             ->add('path', Filters\TextFilterType::class);
     }
 

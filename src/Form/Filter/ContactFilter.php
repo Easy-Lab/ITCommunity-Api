@@ -23,6 +23,7 @@ class ContactFilter extends AbstractType
 
         $builder
             ->add('body', Filters\TextFilterType::class)
+            ->add('hash', Filters\TextFilterType::class)
             ->add(
                 'publicationDate',
                 Filters\DateTimeRangeFilterType::class,

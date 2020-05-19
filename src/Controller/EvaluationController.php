@@ -103,15 +103,15 @@ class EvaluationController extends AbstractController implements ControllerInter
     /**
      * Show single Evaluation.
      *
-     * @Route(path="/{evaluation}", name="api_evaluation_show", methods={Request::METHOD_GET})
+     * @Route(path="/{hash}", name="api_single_evaluation_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="Evaluation")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns evaluation of given identifier.",
+     *     description="Returns evaluation of given hash.",
      *     @SWG\Schema(
-     *         type="object",
-     *         title="contact",
+     *         type="array",
+     *         title="evaluation",
      *         @SWG\Items(ref=@Model(type=Evaluation::class))
      *     )
      * )
@@ -198,7 +198,7 @@ class EvaluationController extends AbstractController implements ControllerInter
     /**
      * Edit existing Evaluation.
      *
-     * @Route(path="/{evaluation}", name="api_evaluation_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/{hash}", name="api_evaluation_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="Evaluation")
      * @SWG\Response(
@@ -242,7 +242,7 @@ class EvaluationController extends AbstractController implements ControllerInter
     /**
      * Delete Evaluation.
      *
-     * @Route(path="/{evaluation}", name="api_evaluation_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_evaluation_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="Evaluation")
      * @SWG\Response(
@@ -264,6 +264,7 @@ class EvaluationController extends AbstractController implements ControllerInter
         try {
             $evaluation->setUser(null);
             $evaluation->setContact(null);
+            $evaluation->setMessage(null);
             $this->entityManager->remove($evaluation);
             $this->entityManager->flush();
         } catch (\Exception $exception) {

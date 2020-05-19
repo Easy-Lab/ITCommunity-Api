@@ -27,13 +27,24 @@ class DeleteUserVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         // Our previous business logic indicates that admins can do it regardless
-        if (\in_array(\implode($token->getRoleNames()), ['ROLE_ADMIN','ROLE_USER'])) {
+        if (\in_array(\implode($token->getRoleNames()), ['ROLE_ADMIN'])) {
             return true;
         }
 
         // Allow controller handle not found subject
         if (null === $subject) {
             return true;
+        }
+
+        $user = $token->getUser();
+
+        if ($user === "anon.") {
+            return false;
+        }
+
+        // Allow user to update account
+        if ($user instanceof User) {
+            return $user;
         }
 
         return false;

@@ -22,6 +22,7 @@ class BugReportFilter extends AbstractType
         ];
 
         $builder
+            ->add('hash', Filters\TextFilterType::class)
             ->add(
                 'publicationDate',
                 Filters\DateTimeRangeFilterType::class,

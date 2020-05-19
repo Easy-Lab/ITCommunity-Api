@@ -24,6 +24,7 @@ class AffiliateFilter extends AbstractType
         $builder
             ->add('body', Filters\TextFilterType::class)
             ->add('status', Filters\TextFilterType::class)
+            ->add('hash', Filters\TextFilterType::class)
             ->add(
                 'publicationDate',
                 Filters\DateTimeRangeFilterType::class,

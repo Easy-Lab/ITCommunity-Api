@@ -69,12 +69,19 @@ class Evaluation
     private $feedback;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="message", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="evaluation", cascade={"persist", "remove"})
      *
      * @JMS\Expose
      * @JMS\Groups("points")
      */
     private $points;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
+     */
+    private $hash;
 
     public function getId(): ?int
     {
@@ -147,5 +154,17 @@ class Evaluation
     public function getPoint(): Collection
     {
         return $this->points;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
+
+        return $this;
     }
 }
