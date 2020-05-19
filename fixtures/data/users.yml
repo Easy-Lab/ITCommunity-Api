@@ -26,6 +26,8 @@ App\Entity\User:
     address2: <secondaryAddress()>
     zipcode: <postcode()>
     city: <city()>
+    latitude: <latitude(47, 48)>
+    longitude: <longitude(2, 3)>
     phone: <phoneNumber()>
     informations_enabled: <boolean()>
     is_banned: <boolean()>
