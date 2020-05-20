@@ -339,6 +339,42 @@ class UserController extends AbstractController implements ControllerInterface
     }
 
     /**
+     * Show user Affiliates.
+     *
+     * @Route(path="/{username}/affiliates", name="api_affiliates_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns affiliates of given username.",
+     *     @SWG\Schema(
+     *         type="array",
+     *         title="affiliate",
+     *         @SWG\Items(ref=@Model(type=Affiliate::class))
+     *     )
+     * )
+     *
+     * @param string $username
+     * @return JsonResponse
+     */
+    public function showAffiliates(string $username): JsonResponse
+    {
+        $user = $this->userManager->findUserByUsername($username);
+
+        if(!$user) {
+            return $this->createNotFoundResponse();
+        }
+
+        $affiliates = $user->getAffiliates();
+
+        if (!$affiliates) {
+            return $this->createNotFoundResponse();
+        }
+
+        return $this->createResourceResponse($affiliates);
+    }
+
+    /**
      * Add new User.
      *
      * @Route(name="api_user_create", methods={Request::METHOD_POST})
