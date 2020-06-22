@@ -29,7 +29,7 @@ class UpdateUserVoter extends Voter
     {
 
         // Our previous business logic indicates that mods and admins can do it regardless
-        if (\in_array(\implode($token->getRoleNames()), ['ROLE_MODERATOR', 'ROLE_ADMIN', 'ROLE_USER'])) {
+        if (\in_array(\implode($token->getRoleNames()), ['ROLE_MODERATOR', 'ROLE_ADMIN'])) {
             return true;
         }
 

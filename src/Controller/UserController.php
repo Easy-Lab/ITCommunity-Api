@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -120,6 +119,35 @@ class UserController extends AbstractController implements ControllerInterface
 
     /**
      * Show single Users.
+     *
+     * @Route(path="/my-account", name="api_user_account_show", methods={Request::METHOD_GET})
+     *
+     * @SWG\Tag(name="User")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns user.",
+     *     @SWG\Schema(
+     *         type="array",
+     *         title="user",
+     *         @SWG\Items(ref=@Model(type=User::class))
+     *     )
+     * )
+     *
+     * @return JsonResponse
+     */
+    public function showAccountAction(): JsonResponse
+    {
+        $user = $this->userService->getCurrentUser();
+
+        if (!$user) {
+            return $this->createNotFoundResponse();
+        }
+
+        return $this->createResourceResponse($user, Response::HTTP_OK);
+    }
+
+    /**
+     * Show single Users by username.
      *
      * @Route(path="/{username}", name="api_user_show", methods={Request::METHOD_GET})
      *
