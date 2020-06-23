@@ -4,7 +4,7 @@ services:
   - docker
 
 before_install:
-  - cp .env.test .env
+  - cp .env.test.dist .env
   - docker-compose up -d
   - docker exec web bash -c "COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction"
   - docker-compose exec web php bin/console doctrine:schema:update --force
