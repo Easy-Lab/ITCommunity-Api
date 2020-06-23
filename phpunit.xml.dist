@@ -30,6 +30,7 @@
         <!-- Configure your db driver and server_version in config/packages/doctrine.yaml -->
         <env name="DATABASE_URL" value="mysql://root:root@database:3306/symfonyapi"/>
         <!-- ###- doctrine/doctrine-bundle ### -->
+        <env name="CORS_ALLOW_ORIGIN" value="^https?://localhost:?[0-9]*$" />
     </php>
 
     <testsuites>

@@ -27,7 +27,7 @@ class PrivateChat
     private $firstUser;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="privateChats")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="privateChats2")
      * @ORM\JoinColumn(nullable=false)
      *
      * @JMS\Expose

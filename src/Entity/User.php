@@ -67,6 +67,11 @@ class User extends AbstractUser
     private $privateChats;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PrivateChat", mappedBy="secondUser", orphanRemoval=true)
+     */
+    private $privateChats2;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="user")
      *
      * @JMS\Expose
@@ -288,6 +293,14 @@ class User extends AbstractUser
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection|PrivateChat[]
+     */
+    public function getPrivateChats2(): Collection
+    {
+        return $this->privateChats2;
     }
 
     /**
