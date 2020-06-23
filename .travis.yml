@@ -4,7 +4,8 @@ services:
   - docker
 
 before_install:
-  - cp .env.test .env
+  - cp .env.dist .env
+  - cat .env
   - docker-compose up -d
   - docker exec web bash -c "COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction"
 
@@ -13,5 +14,5 @@ script:
   - docker-compose exec web php bin/console doctrine:schema:validate --skip-sync -vvv --no-interaction
   - docker-compose exec web php bin/console doctrine:schema:update --force
   - docker-compose exec web php bin/console hautelook:fixtures:load -q --purge-with-truncate
-  - docker-compose exec web SYMFONY_DEPRECATIONS_HELPER=max[self]=0 php bin/phpunit
+  - docker exec web bash -c "SYMFONY_DEPRECATIONS_HELPER=max[self]=0 php bin/phpunit"
   - docker-compose down
