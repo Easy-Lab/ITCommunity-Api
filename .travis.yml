@@ -7,8 +7,9 @@ before_install:
   - cp .env.dist .env
   - docker-compose up -d
   - docker exec web bash -c "COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction"
-  - docker-compose exec web openssl genrsa -out config/jwt/private2.pem -aes256 -passout pass:foobar 4096
-  - docker-compose exec web openssl rsa -pubout -in config/jwt/private2.pem  -passin pass:foobar -out config/jwt/public2.pem
+  - mkdir config/jwt
+  - openssl genrsa -out config/jwt/private2.pem -aes256 -passout pass:foobar 4096
+  - openssl rsa -pubout -in config/jwt/private2.pem  -passin pass:foobar -out config/jwt/public2.pem
 
 script:
   - composer validate
