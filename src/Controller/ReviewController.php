@@ -32,6 +32,7 @@ class ReviewController extends AbstractController implements ControllerInterface
 
     /**
      * ReviewController constructor.
+     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {

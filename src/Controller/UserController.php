@@ -19,6 +19,7 @@ use App\Service\Manager\UserManager;
 use App\Service\UserService;
 use App\Utils\Mailer;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -62,6 +63,11 @@ class UserController extends AbstractController implements ControllerInterface
     private $mailer;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * UserController constructor.
      * @param UserManager $userManager
      * @param AffiliateManager $affiliateManager
@@ -69,6 +75,7 @@ class UserController extends AbstractController implements ControllerInterface
      * @param UserService $userService
      * @param GeolocationService $geolocationService
      * @param Mailer $mailer
+     * @param LoggerInterface $logger
      */
     public function __construct(
         UserManager $userManager,
@@ -76,7 +83,8 @@ class UserController extends AbstractController implements ControllerInterface
         PointManager $pointManager,
         UserService $userService,
         GeolocationService $geolocationService,
-        Mailer $mailer
+        Mailer $mailer,
+        LoggerInterface $logger
     )
     {
         parent::__construct(User::class);
@@ -87,6 +95,7 @@ class UserController extends AbstractController implements ControllerInterface
         $this->userService = $userService;
         $this->geolocationService = $geolocationService;
         $this->mailer = $mailer;
+        $this->logger = $logger;
     }
 
     /**
@@ -429,6 +438,8 @@ class UserController extends AbstractController implements ControllerInterface
         $userUsernameExist = $this->userManager->findUserByUsername($data['username']);
         $userAffiliateExist = $this->affiliateManager->findAffiliateByEmail($data['email']);
 
+        $this->logger->info('User create account');
+
         if ($userEmailExist or $userUsernameExist) {
             return $this->createAlredyExistResponse();
         }
@@ -501,6 +512,8 @@ class UserController extends AbstractController implements ControllerInterface
     {
         $userEmailExist = $this->userManager->findUserByEmail($email);
 
+        $this->logger->alert('User forged password');
+
         try {
             if (!$userEmailExist){
                 return new JsonResponse($email, Response::HTTP_NOT_FOUND);
@@ -540,6 +553,8 @@ class UserController extends AbstractController implements ControllerInterface
 
         $user = $this->userManager->findUserByHash($hash);
         $password = $data['plainPassword'];
+
+        $this->logger->alert('User update password');
 
         if (!$user) {
             return $this->createNotFoundResponse();
@@ -582,6 +597,8 @@ class UserController extends AbstractController implements ControllerInterface
     public function updateAction(Request $request, string $username): JsonResponse
     {
         $user = $this->userManager->findUserByUsername($username);
+
+        $this->logger->alert('User update account');
 
         $data = \json_decode($request->getContent(), true);
         if (isset($data['email'])) {
@@ -637,6 +654,8 @@ class UserController extends AbstractController implements ControllerInterface
         if (!$user) {
             return $this->createNotFoundResponse();
         }
+
+        $this->logger->alert('Delete user account');
 
         try {
             $this->entityManager->remove($user);
