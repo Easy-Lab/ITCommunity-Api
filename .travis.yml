@@ -6,7 +6,7 @@ services:
 before_install:
   - cp .env.test .env
   - docker-compose up -d
-  - docker-compose exec web composer install --no-interaction
+  - docker-compose exec web COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction
   - docker-compose exec web php bin/console doctrine:schema:update --force
   - docker-compose exec web php bin/console hautelook:fixtures:load -q --purge-with-truncate
 
