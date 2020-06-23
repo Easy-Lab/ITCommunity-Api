@@ -5,13 +5,13 @@ services:
 
 before_install:
   - cp .env.dist .env
-  - openssl genrsa -out config/jwt/private.pem -aes256 -passout pass:foobar 4096
-  - openssl rsa -pubout -in config/jwt/private.pem -passin pass:foobar -out config/jwt/public.pem
   - docker-compose up -d
   - docker exec web bash -c "COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction"
 
 script:
   - composer validate
+  - docker-compose exec web openssl genrsa -out config/jwt/private.pem -aes256 -passout pass:foobar 4096
+  - docker-compose exec web openssl rsa -pubout -in config/jwt/private.pem -passin pass:foobar -out config/jwt/public.pem
   - docker-compose exec web php bin/console doctrine:schema:validate --skip-sync -vvv --no-interaction
   - docker-compose exec web php bin/console doctrine:schema:update --force
   - docker-compose exec web php bin/console hautelook:fixtures:load -q --purge-with-truncate
