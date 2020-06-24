@@ -33,3 +33,7 @@ localhost:8080
 ```
 - Utilisateur : root
 - Mot de passe :  root
+
+## Exemple d'usage
+
+[Cliquer ici](https://github.com/Easy-Lab/ITCommunity-Api/blob/develop/EXAMPLES.md)
