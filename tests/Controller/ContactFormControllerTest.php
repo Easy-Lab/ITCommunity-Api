@@ -16,40 +16,6 @@ class ContactFormControllerTest extends AbstractWebTestCase
     protected static $body;
     protected static $hash;
 
-    public function testCreateAction()
-    {
-        self::$firstname = $this->faker->firstName;
-        self::$lastname = $this->faker->lastName;
-        self::$phone = $this->faker->phoneNumber;
-        self::$email = $this->faker->email;
-        self::$body = $this->faker->paragraphs(1,2);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            '/contactforms',
-            [],
-            [],
-            [],
-            json_encode([
-                'firstname' => self::$firstname,
-                'lastname' => self::$lastname,
-                'phone' => self::$phone,
-                'email' => self::$email,
-                'subject' => self::$body,
-                'body' => self::$body
-            ])
-        );
-
-        $this->assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
-
-        $this->assertTrue(
-            $this->client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
-    }
-
     public function testAuthenticatedCreateAction()
     {
         self::$firstname = $this->faker->firstName;
