@@ -1,4 +1,4 @@
-##Travis CI
+## Travis CI
 
 [![Build Status](https://travis-ci.org/Easy-Lab/ITCommunity-Api.svg?branch=develop)](https://travis-ci.org/Easy-Lab/ITCommunity-Api)
 
