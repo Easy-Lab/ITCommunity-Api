@@ -40,11 +40,6 @@ $ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
 
 Modify all environment variables according to your configuration. [View all variables.](https://github.com/Easy-Lab/ITCommunity-Api/blob/develop/ENV.md)
 
-- Modifier le .env :
-```bash
-DATABASE_URL=mysql://root:root@database:3306/symfonyapi
-```
-
 **Setup database**
 
 `php bin/console d:s:u --force`
@@ -73,4 +68,4 @@ php bin/phpunit
 
 ## Example of use
 
-[Cliquer ici](https://github.com/Easy-Lab/ITCommunity-Api/blob/develop/EXAMPLES.md)
+[Click here](https://github.com/Easy-Lab/ITCommunity-Api/blob/develop/EXAMPLES.md)
