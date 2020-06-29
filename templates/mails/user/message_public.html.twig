@@ -1,0 +1,18 @@
+{% extends 'mails/layout.html.twig' %}
+
+{% block body %}
+    <p>{{ ('mail.common.hello')|trans }} {{ user.firstname }},</p>
+
+    <p>{{ message.contact.firstname }} {{ ('mail.user.message_public.content')|trans }} </p>
+
+    <p><i>{{ message.question }}</i></p>
+
+    <table cellspacing="0" cellpadding="0"> <tr>
+            <td class="respButtonMail" align="left" width="260" height="45" bgcolor="#00558c" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #ffffff; display: block; text-align: center;">
+                <a href="{{ urlFront }}?utm_source=Platform_mail&utm_medium=email&utm_campaign=Platform_Ambassador&utm_content=message_public" target="_blank" style="color: #fff;text-transform: inherit; text-align: left; padding-right: 30px; min-width: 80px; display: inline-block; vertical-align: middle; touch-action: manipulation; cursor: pointer;  padding: 14px 13px; font-size: 16px; border-radius: 5px; text-decoration: none;">{{ ('mail.user.message_public.button')|trans }}</a>
+            </td>
+        </tr>
+    </table>
+
+    <p>{{ 'mail.common.sign'|trans }}</p>
+{% endblock %}

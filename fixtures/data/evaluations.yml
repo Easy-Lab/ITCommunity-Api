@@ -1,0 +1,7 @@
+App\Entity\Evaluation:
+  evaluation_{1..10}:
+    user: '@user*'
+    contact: '@contact*'
+    message: '@message*'
+    rating: <numberBetween(1, 5)>
+    feedback: <paragraph(1, 2)>

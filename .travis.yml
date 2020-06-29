@@ -1,38 +1,19 @@
-language: php
-sudo: false
+sudo: required
 
-cache:
-  directories:
-  - $HOME/.composer/cache/files
-  - ./bin/.phpunit
-
-env:
-  global:
-  - SYMFONY_PHPUNIT_DIR=./bin/.phpunit
-
-matrix:
-  fast_finish: true
-  include:
-  - php: 7.2
+services:
+  - docker
 
 before_install:
-- '[[ "$TRAVIS_PHP_VERSION" == "7.2" ]] || phpenv config-rm xdebug.ini'
-- composer self-update
-
-install:
-- COMPOSER_MEMORY_LIMIT=-1 composer install
-- ./bin/phpunit install
+  - openssl aes-256-cbc -K $encrypted_c312156a8ea8_key -iv $encrypted_c312156a8ea8_iv -in config/jwt/private.pem.enc -out config/jwt/private.pem -d
+  - openssl aes-256-cbc -K $encrypted_4f5ac0744858_key -iv $encrypted_4f5ac0744858_iv -in config/jwt/public.pem.enc -out config/jwt/public.pem -d
+  - openssl aes-256-cbc -K $encrypted_3c84dcdc6bbe_key -iv $encrypted_3c84dcdc6bbe_iv -in .env.enc -out .env -d
+  - docker-compose up -d
+  - docker exec web bash -c "COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction"
 
 script:
-- ./bin/phpunit
-# this checks that the source code follows the Symfony Code Syntax rules
-- '[[ "$TRAVIS_PHP_VERSION" == "7.2" ]] || ./vendor/bin/php-cs-fixer fix --dry-run -v phpcs.xml.dist'
-- ./bin/console lint:yaml config
-# this checks that the application doesn't use dependencies with known security vulnerabilities
-- ./bin/console security:check
-# this checks that the composer.json and composer.lock files are valid
-- composer validate
-# this checks that Doctrine's mapping configurations are valid
-- ./bin/console doctrine:schema:validate --skip-sync -vvv --no-interaction
-- '[[ "$TRAVIS_PHP_VERSION" == "7.2" ]] || ./vendor/bin/phpmd src/ text phpmd.dist.xml'
-- '[[ "$TRAVIS_PHP_VERSION" == "7.2" ]] || ./vendor/bin/phpstan analyse src'
+  - composer validate
+  - docker-compose exec web php bin/console doctrine:schema:validate --skip-sync -vvv --no-interaction
+  - docker-compose exec web php bin/console doctrine:schema:update --force
+  - docker-compose exec web php bin/console hautelook:fixtures:load -q --purge-with-truncate
+  - docker exec web bash -c "SYMFONY_DEPRECATIONS_HELPER=max[self]=0 php bin/phpunit"
+  - docker-compose down

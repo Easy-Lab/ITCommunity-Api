@@ -3,6 +3,7 @@ version: "3.3"
 services:
   web:
     image: webdevops/php-nginx:7.3
+    container_name: web
     working_dir: /app
     ports:
       - 80:80
@@ -17,10 +18,12 @@ services:
       PHP_DISPLAY_ERRORS: 1
 
   database:
-    image: mysql:5.6
+    image: mysql:5.7
     volumes:
       - ./docker/mysqlconf:/tmp/conf.d
       - ./docker/mysql:/tmp/mysql
+    ports:
+      - 3306:3306
     environment:
       MYSQL_DATABASE: symfonyapi
       MYSQL_ROOT_PASSWORD: root

@@ -1,0 +1,8 @@
+App\Entity\BugReport:
+  report_{1..20}:
+    firstname: <firstName()>
+    lastname: <lastName()>
+    email: <email()>
+    subject: <paragraph(1, 2)>
+    body: <paragraph(3, 8)>
+    solved: <boolean(50)>

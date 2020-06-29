@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Traits\IdColumnTrait;
-use App\Traits\TimeAwareTrait;
+use App\Traits\TimeAwareTraitPublic;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Validator\Constraints as Assert;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\ReviewRepository")
  *
  * @JMS\ExclusionPolicy("ALL")
@@ -18,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Review
 {
     use IdColumnTrait;
-    use TimeAwareTrait;
+    use TimeAwareTraitPublic;
 
     /**
      * @var string
@@ -47,36 +51,56 @@ class Review
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="reviews", cascade={"persist", "remove"})
      *
-     * @JMS\Expose
-     * @JMS\Groups("author")
-     */
-    protected $author;
-
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="date")
-     *
-     * @Assert\NotBlank
+     * @SWG\Property(ref=@Model(type=Review::class))
      *
      * @JMS\Expose
+     * @JMS\Groups("user")
      */
-    protected $publicationDate;
+    protected $user;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
      */
-    private $name_component;
+    private $nameComponent;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
      */
-    private $company_component;
+    private $companyComponent;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose
      */
-    private $other_information_component;
+    private $otherInformationComponent;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
+     */
+    private $type;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="review", cascade={"persist", "remove"})
+     *
+     * @JMS\Expose
+     * @JMS\Groups("points")
+     */
+    private $points;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_REVIEW', object)")
+     */
+    private $hash;
 
     /**
      * @return string|null
@@ -119,78 +143,116 @@ class Review
     }
 
     /**
-     * @return \DateTimeInterface|null
-     */
-    public function getPublicationDate(): ?\DateTimeInterface
-    {
-        return $this->publicationDate;
-    }
-
-    /**
-     * @param \DateTimeInterface $publicationDate
-     *
-     * @return Review
-     */
-    public function setPublicationDate(?\DateTimeInterface $publicationDate): self
-    {
-        $this->publicationDate = $publicationDate;
-
-        return $this;
-    }
-
-    /**
      * @return User|null
      */
-    public function getAuthor(): ?User
+    public function getUser(): ?User
     {
-        return $this->author;
+        return $this->user;
     }
 
     /**
-     * @param User|null $author
-     *
+     * @param User|null $user
      * @return Review
      */
-    public function setAuthor(?User $author): self
+    public function setUser(?User $user): self
     {
-        $this->author = $author;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getNameComponent(): ?string
+    /**
+     * @return mixed
+     */
+    public function getNameComponent()
     {
-        return $this->name_component;
+        return $this->nameComponent;
     }
 
-    public function setNameComponent(string $name_component): self
+    /**
+     * @param mixed $nameComponent
+     */
+    public function setNameComponent($nameComponent): void
     {
-        $this->name_component = $name_component;
+        $this->nameComponent = $nameComponent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCompanyComponent()
+    {
+        return $this->companyComponent;
+    }
+
+    /**
+     * @param mixed $companyComponent
+     */
+    public function setCompanyComponent($companyComponent): void
+    {
+        $this->companyComponent = $companyComponent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOtherInformationComponent()
+    {
+        return $this->otherInformationComponent;
+    }
+
+    /**
+     * @param mixed $otherInformationComponent
+     */
+    public function setOtherInformationComponent($otherInformationComponent): void
+    {
+        $this->otherInformationComponent = $otherInformationComponent;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     * @return Review
+     */
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
 
-    public function getCompanyComponent(): ?string
+    /**
+     * @return Collection|Point[]
+     */
+    public function getPoint(): Collection
     {
-        return $this->company_component;
+        return $this->points;
     }
 
-    public function setCompanyComponent(string $company_component): self
+    /**
+     * @return string|null
+     */
+    public function getHash(): ?string
     {
-        $this->company_component = $company_component;
+        return $this->hash;
+    }
+
+    /**
+     * @param string $hash
+     * @return Review
+     */
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
 
         return $this;
     }
 
-    public function getOtherInformationComponent(): ?string
-    {
-        return $this->other_information_component;
-    }
-
-    public function setOtherInformationComponent(?string $other_information_component): self
-    {
-        $this->other_information_component = $other_information_component;
-
-        return $this;
-    }
 }

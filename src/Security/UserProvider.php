@@ -78,12 +78,11 @@ class UserProvider implements UserProviderInterface
      *
      * This method is meant to be an extension point for child classes.
      *
-     * @param string $email
-     *
+     * @param $param
      * @return UserInterface|null
      */
-    protected function findUser($email): ?UserInterface
+    protected function findUser($param): ?UserInterface
     {
-        return $this->userManager->findUserByEmail($email);
+        return $this->userManager->findUserByEmailOrUsername($param);
     }
 }

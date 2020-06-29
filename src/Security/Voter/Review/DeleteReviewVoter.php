@@ -18,7 +18,7 @@ class DeleteReviewVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        // you only want to vote if the attribute and subject are what you expect
+        // You only want to vote if the attribute and subject are what you expect
         return self::CAN_DELETE_REVIEW === $attribute && ($subject instanceof Review || null === $subject);
     }
 
@@ -27,21 +27,25 @@ class DeleteReviewVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        // our previous business logic indicates that admins can do it regardless
-        if (\in_array(\implode($token->getRoleNames()), ['ROLE_MODERATOR', 'ROLE_ADMIN'])) {
+        // Our previous business logic indicates that admins can do it regardless
+        if (\in_array(\implode($token->getRoleNames()), ['ROLE_ADMIN'])) {
             return true;
         }
 
-        // allow controller handle not found subject
+        // Allow controller handle not found subject
         if (null === $subject) {
             return true;
         }
 
         $user = $token->getUser();
 
-        // allow user to delete her review
-        if ($user instanceof User) {
-            return $subject->getAuthor()->getId() === $user->getId();
+        if ($user === "anon.") {
+            return false;
+        }
+
+        // Allow user to delete her review
+        if ($subject instanceof Review) {
+            return $subject->getUser()->getId() === $user->getId();
         }
 
         return false;

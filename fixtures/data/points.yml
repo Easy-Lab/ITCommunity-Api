@@ -1,0 +1,21 @@
+App\Entity\Point:
+  points_{1..10}:
+    user: '@user*'
+    message: '@message*'
+    amount: 25
+    type: "Question"
+  points_{11..20}:
+    user: '@user*'
+    evaluation: '@evaluation*'
+    amount: <numberBetween(1, 25)>
+    type: "Evaluation"
+  points_{21..30}:
+    user: '@user*'
+    review: '@review*'
+    amount: 25
+    type: "Review"
+  points_{31..40}:
+    user: '@user*'
+    affiliate: '@affiliate*'
+    amount: 25
+    type: "Affiliate"

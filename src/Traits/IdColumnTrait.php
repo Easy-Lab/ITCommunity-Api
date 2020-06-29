@@ -6,7 +6,12 @@ namespace App\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
+/**
+ * @JMS\ExclusionPolicy("ALL")
+ */
 trait IdColumnTrait
 {
     /**
@@ -15,8 +20,6 @@ trait IdColumnTrait
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
-     *
-     * @JMS\Expose
      */
     protected $id;
 

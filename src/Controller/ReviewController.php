@@ -5,11 +5,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Point;
 use App\Entity\Review;
 use App\Exception\ApiException;
 use App\Form\Filter\ReviewFilter;
 use App\Form\ReviewType;
 use App\Interfaces\ControllerInterface;
+use App\Service\UserService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
@@ -24,11 +26,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class ReviewController extends AbstractController implements ControllerInterface
 {
     /**
-     * ReviewController constructor.
+     * @var UserService
      */
-    public function __construct()
+    protected $userService;
+
+    /**
+     * ReviewController constructor.
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
     {
         parent::__construct(Review::class);
+        $this->userService = $userService;
     }
 
     /**
@@ -63,14 +72,14 @@ class ReviewController extends AbstractController implements ControllerInterface
     /**
      * Show single Reviews.
      *
-     * @Route(path="/{review}", name="api_review_show", methods={Request::METHOD_GET})
+     * @Route(path="/{hash}", name="api_single_review_show", methods={Request::METHOD_GET})
      *
      * @SWG\Tag(name="Review")
      * @SWG\Response(
      *     response=200,
-     *     description="Returns review of given identifier.",
+     *     description="Returns review of given hash.",
      *     @SWG\Schema(
-     *         type="object",
+     *         type="array",
      *         title="review",
      *         @SWG\Items(ref=@Model(type=Review::class))
      *     )
@@ -97,7 +106,7 @@ class ReviewController extends AbstractController implements ControllerInterface
      * @SWG\Tag(name="Review")
      * @SWG\Response(
      *     response=200,
-     *     description="Updates Review of given identifier and returns the updated object.",
+     *     description="Add new Review.",
      *     @SWG\Schema(
      *         type="object",
      *         @SWG\Items(ref=@Model(type=Review::class))
@@ -113,9 +122,15 @@ class ReviewController extends AbstractController implements ControllerInterface
      */
     public function createAction(Request $request, Review $review = null): JsonResponse
     {
+        $user = $this->userService->getCurrentUser();
+
+        if ($user === "anon.") {
+            return $this->createForbiddenResponse();
+        }
+
         if (!$review) {
             $review = new Review();
-            $review->setAuthor($this->getUser());
+            $review->setUser($user);
         }
 
         $form = $this->getForm(
@@ -128,6 +143,13 @@ class ReviewController extends AbstractController implements ControllerInterface
 
         try {
             $this->formHandler->process($request, $form);
+            $point = new Point();
+            $point->setReview($review);
+            $point->setUser($user);
+            $point->setAmount(25);
+            $point->setType('Review');
+            $this->entityManager->persist($point);
+            $this->entityManager->flush();
         } catch (ApiException $e) {
             return new JsonResponse($e->getData(), Response::HTTP_BAD_REQUEST);
         }
@@ -138,7 +160,7 @@ class ReviewController extends AbstractController implements ControllerInterface
     /**
      * Edit existing Review.
      *
-     * @Route(path="/{review}", name="api_review_edit", methods={Request::METHOD_PATCH})
+     * @Route(path="/{hash}", name="api_review_edit", methods={Request::METHOD_PATCH})
      *
      * @SWG\Tag(name="Review")
      * @SWG\Response(
@@ -163,16 +185,6 @@ class ReviewController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        if (($review->getAuthor() !== $this->getUser()) && ($this->getUser()->getRoles() === ['ROLE_USER'])) {
-            return $this->createNotFoundResponse();
-        }
-
-        if($this->getUser()->getRoles() === ['ROLE_USER'] || $this->getUser()->getRoles() === ['ROLE_MODERATOR']) {
-            if($review->getAuthor()->getRoles() === ['ROLE_ADMIN']) {
-                return $this->createNotFoundResponse();
-            }
-        }
-
         $form = $this->getForm(
             ReviewType::class,
             $review,
@@ -193,16 +205,12 @@ class ReviewController extends AbstractController implements ControllerInterface
     /**
      * Delete Review.
      *
-     * @Route(path="/{review}", name="api_review_delete", methods={Request::METHOD_DELETE})
+     * @Route(path="/{hash}", name="api_review_delete", methods={Request::METHOD_DELETE})
      *
      * @SWG\Tag(name="Review")
      * @SWG\Response(
      *     response=200,
      *     description="Delete Review of given identifier and returns the empty object.",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @SWG\Items(ref=@Model(type=Review::class))
-     *     )
      * )
      *
      * @param Review|null $review
@@ -217,14 +225,8 @@ class ReviewController extends AbstractController implements ControllerInterface
             return $this->createNotFoundResponse();
         }
 
-        if($this->getUser()->getRoles() === ['ROLE_USER'] || $this->getUser()->getRoles() === ['ROLE_MODERATOR']) {
-            if($review->getAuthor()->getRoles() === ['ROLE_ADMIN']) {
-                return $this->createNotFoundResponse();
-            }
-        }
-
         try {
-            $review->setAuthor(null);
+            $review->setUser(null);
             $this->entityManager->remove($review);
             $this->entityManager->flush();
         } catch (\Exception $exception) {

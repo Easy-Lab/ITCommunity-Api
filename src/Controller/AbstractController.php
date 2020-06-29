@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Interfaces\RepositoryInterface;
 use App\Repository\AbstractRepository;
+use App\Repository\MessageRepository;
 use App\Resource\PaginationResource;
 use App\Traits\ControllerTrait;
 use Doctrine\Common\Inflector\Inflector;
@@ -15,7 +16,7 @@ use Doctrine\ORM\Query;
 use JMS\Serializer\SerializationContext;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,9 @@ abstract class AbstractController extends Controller
 
     public const DELETED = ['success' => 'Deleted.'];
     public const NOT_FOUND = ['error' => 'Resource not found.'];
+    public const FORBIDDEN = ['error' => 'This operation is not authorized.'];
+    public const ALREDY_EXIST = ['error' => 'User alredy exist with this email or username.'];
+    public const ALREDY_EVALUATION = ['error' => 'You have alredy evaluate this user.'];
     public const GENERAL_ERROR = ['error' => 'Something went wrong.'];
 
     /**
@@ -130,6 +134,37 @@ abstract class AbstractController extends Controller
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function createForbiddenResponse(): JsonResponse
+    {
+        $this->responseCreator->setData(self::FORBIDDEN);
+
+        return $this->responseCreator->getResponse(Response::HTTP_UNAUTHORIZED, $this->getEntityResponseField());
+    }
+
+
+    /**
+     * @return JsonResponse
+     */
+    public function createAlredyExistResponse(): JsonResponse
+    {
+        $this->responseCreator->setData(self::ALREDY_EXIST);
+
+        return $this->responseCreator->getResponse(Response::HTTP_CONFLICT, $this->getEntityResponseField());
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function createAlredyExistEvaluation(): JsonResponse
+    {
+        $this->responseCreator->setData(self::ALREDY_EVALUATION);
+
+        return $this->responseCreator->getResponse(Response::HTTP_CONFLICT, $this->getEntityResponseField());
+    }
+
+    /**
      * @param \Exception $exception
      *
      * @return JsonResponse
@@ -162,7 +197,14 @@ abstract class AbstractController extends Controller
         $limit = (1 <= $limit) && ($limit <= 100) ?: 10;
 
         //  Set pages based on the request parameters.
-        $paginator->setMaxPerPage($request->query->get('limit', $limit));
+        if($request->query->get('limit', $limit) > 0) {
+            $paginator->setMaxPerPage($request->query->get('limit', $limit));
+        }
+
+        if($request->query->get('limit', $limit) == 0) {
+            $paginator->setMaxPerPage($paginator->getNbResults());
+        }
+
         $paginator->setCurrentPage($request->query->get('page', 1));
 
         return $paginator;
@@ -179,7 +221,6 @@ abstract class AbstractController extends Controller
         /** @var RepositoryInterface $repository */
         $repository = $this->getRepository();
         $queryBuilder = $repository->getQueryBuilder();
-
         $form = $this->getForm($filterForm);
 
         if ($request->query->has($form->getName())) {
@@ -188,7 +229,7 @@ abstract class AbstractController extends Controller
             $queryBuilder = $this->get('lexik_form_filter.query_builder_updater')
                 ->addFilterConditions($form, $queryBuilder);
         }
-
+        
         $paginagor = $this->createPaginator($request, $queryBuilder->getQuery());
 
         return $paginagor;

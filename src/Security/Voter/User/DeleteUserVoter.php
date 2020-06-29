@@ -17,7 +17,7 @@ class DeleteUserVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        // you only want to vote if the attribute and subject are what you expect
+        // You only want to vote if the attribute and subject are what you expect
         return self::CAN_DELETE_USER === $attribute && ($subject instanceof User || null === $subject);
     }
 
@@ -26,14 +26,25 @@ class DeleteUserVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        // our previous business logic indicates that admins can do it regardless
+        // Our previous business logic indicates that admins can do it regardless
         if (\in_array(\implode($token->getRoleNames()), ['ROLE_ADMIN'])) {
             return true;
         }
 
-        // allow controller handle not found subject
+        // Allow controller handle not found subject
         if (null === $subject) {
             return true;
+        }
+
+        $user = $token->getUser();
+
+        if ($user === "anon.") {
+            return false;
+        }
+
+        // Allow user to update account
+        if ($user instanceof User) {
+            return $user;
         }
 
         return false;

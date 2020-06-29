@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\EventSubscriber\UserSubscriber;
+use App\Service\UserService;
 use App\Traits\IdColumnTrait;
 use App\Traits\TimeAwareTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @JMS\ExclusionPolicy("ALL")
+ * @ORM\EntityListeners({"App\EventListener\UserListener"})
  */
 abstract class AbstractUser implements UserInterface, \Serializable
 {
@@ -22,59 +24,201 @@ abstract class AbstractUser implements UserInterface, \Serializable
     use TimeAwareTrait;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string")
+     *
      * @Assert\NotBlank
      *
-     * @JMS\Expose
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
      */
-    protected $fullName;
+    protected $firstname;
 
     /**
-     * @var string
+     * @ORM\Column(type="string")
      *
-     * @see UserSubscriber::onFlush
+     * @Assert\NotBlank
      *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $lastname;
+
+
+    /**
      * @ORM\Column(type="string", unique=true)
+     *
+     * @JMS\Expose
      */
     protected $username;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string", unique=true)
      *
      * @Assert\Email
      * @Assert\NotBlank
      *
-     * @JMS\Expose
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
      */
     protected $email;
 
     /**
      * @var string
+     *
      */
     protected $plainPassword;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string")
      */
     protected $password;
 
     /**
-     * @var array
+     * @ORM\Column(type="string", length=255)
      *
-     * @SWG\Property(
-     *     type="array",
-     *     @SWG\Items(type="string")
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
      * )
-     *
-     * @ORM\Column(type="json")
      */
-    protected $roles = [];
+    protected $address;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $address2;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
+     */
+    protected $zipcode;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose
+     */
+    protected $city;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $phone;
+
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $informationsEnabled;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $tosAcceptedAt;
+
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $isBanned;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $deletedAt;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $deletedReason;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $deletedFeedback;
+
+    /**
+     * @ORM\Column(type="integer")
+     *
+     * @JMS\Expose
+     */
+    protected $step;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     *
+     * @JMS\Expose
+     */
+    protected $latitude;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     *
+     * @JMS\Expose
+     */
+    protected $longitude;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
+     */
+    protected $hash;
+
+    /**
+     * @ORM\Column(type="json")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_DELETE_USER', object)"
+     * )
+     */
+    protected $roles = ['ROLE_USER'];
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_DELETE_USER', object)"
+     * )
+     */
+    protected $ip;
 
     /**
      * @return string
@@ -93,19 +237,35 @@ abstract class AbstractUser implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $fullName
+     * @return string
      */
-    public function setFullName(string $fullName): void
+    public function getFirstname(): ?string
     {
-        $this->fullName = $fullName;
+        return $this->firstname;
+    }
+
+    /**
+     * @param string $firstname
+     */
+    public function setFirstname(string $firstname): void
+    {
+        $this->firstname = $firstname;
     }
 
     /**
      * @return string
      */
-    public function getFullName(): ?string
+    public function getLastname(): ?string
     {
-        return $this->fullName;
+        return $this->lastname;
+    }
+
+    /**
+     * @param string $lastname
+     */
+    public function setLastname(string $lastname): void
+    {
+        $this->lastname = $lastname;
     }
 
     /**
@@ -113,7 +273,7 @@ abstract class AbstractUser implements UserInterface, \Serializable
      */
     public function getUsername(): ?string
     {
-        return $this->email;
+        return $this->username;
     }
 
     /**
@@ -228,4 +388,200 @@ abstract class AbstractUser implements UserInterface, \Serializable
     {
         [$this->id, $this->username, $this->password] = unserialize($serialized, ['allowed_classes' => false]);
     }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getZipcode(): ?string
+    {
+        return $this->zipcode;
+    }
+
+    public function setZipcode(string $zipcode): void
+    {
+        $this->zipcode = $zipcode;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getInformationsEnabled(): ?bool
+    {
+        return $this->informationsEnabled;
+    }
+
+    public function setInformationsEnabled(bool $informationsEnabled): self
+    {
+        $this->informationsEnabled = $informationsEnabled;
+
+        return $this;
+    }
+
+    public function getTosAcceptedAt(): ?\DateTimeInterface
+    {
+        return $this->tosAcceptedAt;
+    }
+
+    public function setTosAcceptedAt(?\DateTimeInterface $tosAcceptedAt): self
+    {
+        $this->tosAcceptedAt = $tosAcceptedAt;
+
+        return $this;
+    }
+
+    public function getIsBanned(): ?bool
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned(bool $isBanned): self
+    {
+        $this->isBanned = $isBanned;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function getDeletedReason(): ?string
+    {
+        return $this->deletedReason;
+    }
+
+    public function setDeletedReason(?string $deletedReason): self
+    {
+        $this->deletedReason = $deletedReason;
+
+        return $this;
+    }
+
+    public function getDeletedFeedback(): ?string
+    {
+        return $this->deletedFeedback;
+    }
+
+    public function setDeletedFeedback(?string $deletedFeedback): self
+    {
+        $this->deletedFeedback = $deletedFeedback;
+
+        return $this;
+    }
+
+    public function getStep(): ?int
+    {
+        return $this->step;
+    }
+
+    public function setStep(int $step): self
+    {
+        $this->step = $step;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): self
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress2(): ?string
+    {
+        return $this->address2;
+    }
+
+    /**
+     * @param string $address2
+     */
+    public function setAddress2(string $address2): void
+    {
+        $this->address2 = $address2;
+    }
+
+
+    public function getIp(): ?string
+    {
+        return $this->ip;
+    }
+
+    public function setIp(?string $ip): self
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
 }

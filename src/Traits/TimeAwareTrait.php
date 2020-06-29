@@ -14,20 +14,24 @@ trait TimeAwareTrait
     /**
      * @var DateTimeInterface
      *
-     * @JMS\Expose
-     *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
      */
     protected $created;
 
     /**
      * @var DateTimeInterface
      *
-     * @JMS\Expose
-     *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
+     *
+     * @JMS\Expose(
+     *   if="service('security.authorization_checker').isGranted('CAN_UPDATE_USER', object)"
+     * )
      */
     protected $updated;
 
@@ -78,4 +82,5 @@ trait TimeAwareTrait
     {
         return $this->updated;
     }
+    
 }

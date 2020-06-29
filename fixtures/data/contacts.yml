@@ -1,0 +1,5 @@
+App\Entity\Contact:
+  contact_{1..7}:
+    firstname: <firstName()>
+    lastname: <lastName()>
+    email (unique): <email()>

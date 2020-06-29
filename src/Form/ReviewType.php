@@ -20,11 +20,7 @@ class ReviewType extends AbstractType
         $builder
             ->add('body')
             ->add('rating')
-            ->add('author')
-            ->add('publicationDate', DateTimeType::class, [
-                    'widget' => 'single_text',
-                    'input' => 'datetime',
-            ])
+            ->add('type')
             ->add('name_component')
             ->add('company_component')
             ->add('other_information_component');

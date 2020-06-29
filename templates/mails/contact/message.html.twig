@@ -1,0 +1,15 @@
+{% extends 'mails/layoutContact.html.twig' %}
+
+{% block body %}
+    <p>{{ ('mail.common.hello')|trans }} {{ contact.firstname }},</p>
+
+    <p>{{ ('mail.contact.message.content')|trans }} {{ message.user.pseudo }}.</p>
+
+    <p>{{ ('mail.contact.message.answer')|trans }}</p>
+
+    <p><i>{{ message.answer }}</i></p>
+
+    <p>{{ ('mail.contact.message.discute')|trans }} {{ message.user.email }}</p>
+
+    <p>{{ 'mail.common.sign'|trans }}</p>
+{% endblock %}
