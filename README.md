@@ -1,39 +1,76 @@
+##Travis CI
+
+[![Build Status](https://travis-ci.org/Easy-Lab/ITCommunity-Api.svg?branch=develop)](https://travis-ci.org/Easy-Lab/ITCommunity-Api)
+
 ## Description
 
-ITCommunity est un projet de deux étudiants de l'IPSSI. Leur but ? Créer une plateforme communautaire entre passionné d'informatique et les mettre en relation avec des personnes ayant besoin de conseils !
+ITCommunity is a project of two students from IPSSI. Their goal? To create a community platform between IT enthusiasts and put them in touch with people in need of advice!
 
-## Intallation
+## Installation
 
-- Lancer docker : `docker-compose up -d`
-- Accéder au container nginx : `docker-compose exec web /bin/bash`
-- Installer les dépendances avec composer : `composer install`
+**Clone repository**
+
+`git clone git@github.com:Easy-Lab/ITCommunity-Api.git`
+
+**Launch Docker container**
+
+`docker-compose up -d`
+
+**Access to the container**
+
+`docker-compose exec web /bin/bash`
+
+**Install dependencies with composer**
+
+`composer install`
+
+**Generating the Public and Private Key JWT**
+
+Default generate path config/jwt/
+```
+$ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+$ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
+```
+
+**Copy .env.dist to .env**
+
+`cp .env.dist .env`
+
+**Edit .env**
+
+Modify all environment variables according to your configuration. [View all variables.](https://github.com/Easy-Lab/ITCommunity-Api/blob/develop/ENV.md)
+
 - Modifier le .env :
 ```bash
 DATABASE_URL=mysql://root:root@database:3306/symfonyapi
 ```
-- Créée la bdd : `php bin/console doctrine:database:create`
-- Update la bdd : `php bin/console d:s:u --force`
-- Générer les fixtures : `php bin/console hautelook:fixtures:load`
+
+**Setup database**
+
+`php bin/console d:s:u --force`
+
+**Generating fixtures**
+
+`php bin/console hautelook:fixtures:load`
+
+## Access
+
+**To access Nelmio's doc in the browser**
+  
+`localhost`
+
+**To access phpMyAdmin**
+
+`localhost:8080`
+- User : root
+- Password :  root
 
 ## Test
+
 ```bash
 php bin/phpunit
 ```
-## Accès
 
-##### Pour accéder à la doc de Nelmio : 
-
-```bash
-localhost
-```
-
-##### Pour acceder à phpMyAdmin :
-```bash
-localhost:8080
-```
-- Utilisateur : root
-- Mot de passe :  root
-
-## Exemple d'usage
+## Example of use
 
 [Cliquer ici](https://github.com/Easy-Lab/ITCommunity-Api/blob/develop/EXAMPLES.md)

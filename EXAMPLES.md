@@ -32,11 +32,12 @@ By default if Request don't have`limit` parameter Response will return 10 result
 [GET] http://[host]/users?limit=20
 ```
 
+**Get unlimited results per page**
+`[GET] http://[host]/users?limit=0`
+
 You can combine freely combine all available parameters.
 
-```
-[GET] http://[host]/users?limit=20&page=2
-```
+`[GET] http://[host]/users?limit=20&page=2`
 
 **Get users with its reviews**
 You can also expand book listing of it's reviews.
@@ -47,8 +48,7 @@ You can also expand book listing of it's reviews.
 ```
 
 ## Filtering
+
 **Get User of given username**
 
-```
-[GET] http://[host]/users?user_filter[username]=username
-```
+`[GET] http://[host]/users?user_filter[username]=username`
