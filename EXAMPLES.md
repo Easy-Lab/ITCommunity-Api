@@ -7,7 +7,7 @@
 
 ```
 {
-	"username": "developer@symfony.local",
+	"username": "admin",
 	"password": "developer"
 }
 ```
