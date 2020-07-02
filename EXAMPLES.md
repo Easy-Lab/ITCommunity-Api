@@ -33,6 +33,7 @@ By default if Request don't have`limit` parameter Response will return 10 result
 ```
 
 **Get unlimited results per page**
+
 `[GET] http://[host]/users?limit=0`
 
 You can combine freely combine all available parameters.
