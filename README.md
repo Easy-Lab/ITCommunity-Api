@@ -1,6 +1,6 @@
 ## Travis CI
 
-[![Build Status](https://travis-ci.org/Easy-Lab/ITCommunity-Api.svg?branch=develop)](https://travis-ci.org/Easy-Lab/ITCommunity-Api)
+[![Build Status](https://travis-ci.org/Easy-Lab/ITCommunity-Api.svg?branch=master)](https://travis-ci.org/Easy-Lab/ITCommunity-Api)
 
 ## Description
 
